@@ -7,6 +7,8 @@
     text-align: center;
     position: relative;
     z-index: 1;
+    padding: var(--space-lg) var(--space-md);
+    box-sizing: border-box;
 }
 
 .title-wrapper {
@@ -15,7 +17,7 @@
 }
 
 .main-title {
-    font-size: 4rem;
+    font-size: clamp(2.5rem, 12vw, 4rem);
     font-weight: 900;
     margin: 0;
     line-height: 0.9;
@@ -26,32 +28,14 @@
     -webkit-text-fill-color: transparent;
 }
 
-@media (max-width: 480px) {
-    .main-title {
-        font-size: 3rem;
-    }
-
-    .subtitle {
-        font-size: 1rem;
-        margin-bottom: 3rem;
-        padding: 0 1rem;
-    }
-
-    .btn-primary {
-        padding: 1rem 3rem;
-        font-size: 1rem;
-        width: 80%;
-    }
-}
-
 .year-badge {
     position: absolute;
     top: -10px;
-    right: -20px;
+    right: clamp(-12px, -3vw, -20px);
     background: var(--primary-color);
     color: #000;
     font-weight: 800;
-    font-size: 0.9rem;
+    font-size: clamp(0.75rem, 2.5vw, 0.9rem);
     padding: 2px 8px;
     border-radius: 4px;
     transform: rotate(10deg);
@@ -60,9 +44,10 @@
 
 .subtitle {
     color: var(--text-secondary);
-    font-size: 1.25rem;
-    margin-bottom: 4rem;
+    font-size: clamp(1rem, 4vw, 1.25rem);
+    margin-bottom: clamp(2.5rem, 8vw, 4rem);
     line-height: 1.4;
+    padding: 0 var(--space-sm);
 }
 
 .btn-primary {
@@ -70,13 +55,18 @@
     background: var(--primary-color);
     color: #000;
     font-weight: 700;
-    font-size: 1.2rem;
-    padding: 1.2rem 4rem;
+    font-size: clamp(0.9rem, 3.5vw, 1.2rem);
+    padding: clamp(1rem, 3vw, 1.2rem) clamp(2.5rem, 8vw, 4rem);
+    min-height: var(--touch-target-min);
     border-radius: 100px;
     box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
     text-transform: uppercase;
     letter-spacing: 2px;
     transition: all 0.3s ease;
+    width: min(85%, 320px);
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .decor-circle {
@@ -89,4 +79,77 @@
     transform: translate(-50%, -50%);
     z-index: -1;
     pointer-events: none;
+}
+
+@media (max-width: 480px) {
+    .main-title {
+        letter-spacing: -1.5px;
+    }
+
+    .btn-primary {
+        width: min(90%, 300px);
+    }
+
+    .decor-circle {
+        width: 250px;
+        height: 250px;
+    }
+}
+
+@media (max-width: 375px) {
+    .landing-container {
+        padding: var(--space-md) var(--space-sm);
+    }
+
+    .title-wrapper {
+        margin-bottom: 1.5rem;
+    }
+
+    .year-badge {
+        top: -8px;
+        right: -8px;
+        font-size: 0.7rem;
+        padding: 2px 6px;
+    }
+
+    .decor-circle {
+        width: 200px;
+        height: 200px;
+    }
+}
+
+@media (max-width: 320px) {
+    .landing-container {
+        padding: var(--space-sm);
+    }
+
+    .main-title {
+        letter-spacing: -1px;
+    }
+
+    .year-badge {
+        top: -6px;
+        right: -5px;
+        font-size: 0.65rem;
+        padding: 1px 4px;
+    }
+
+    .btn-primary {
+        width: 95%;
+        padding: 0.875rem 1.5rem;
+        letter-spacing: 1px;
+    }
+
+    .decor-circle {
+        width: 160px;
+        height: 160px;
+    }
+}
+
+/* Touch feedback for mobile */
+@media (hover: none) and (pointer: coarse) {
+    .btn-primary:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
 }
