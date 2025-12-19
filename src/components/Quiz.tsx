@@ -57,7 +57,7 @@ export const Quiz = ({ onFinish }: QuizProps) => {
                         transition={{ duration: 0.3 }}
                         className="question-card glass-panel"
                     >
-                        <div className="category-badge">{question.category.split('(')[0]}</div>
+                        <div className="category-badge">{t(question.category).split('(')[0].trim()}</div>
                         <h2 className="question-text">{t(question.id)}</h2>
 
                         <div className="options-grid">
