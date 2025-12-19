@@ -11,6 +11,11 @@ import ja from './locales/ja.json';
 import fr from './locales/fr.json';
 import de from './locales/de.json';
 import it from './locales/it.json';
+import ru from './locales/ru.json';
+import hi from './locales/hi.json';
+import ar from './locales/ar.json';
+import id from './locales/id.json';
+import tr from './locales/tr.json';
 
 i18n
     .use(LanguageDetector)
@@ -26,6 +31,11 @@ i18n
             fr: { translation: fr },
             de: { translation: de },
             it: { translation: it },
+            ru: { translation: ru },
+            hi: { translation: hi },
+            ar: { translation: ar },
+            id: { translation: id },
+            tr: { translation: tr },
         },
         fallbackLng: 'en',
         interpolation: {

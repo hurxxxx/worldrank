@@ -11,6 +11,11 @@ const languages = [
     { code: 'fr', label: 'FR' },
     { code: 'de', label: 'DE' },
     { code: 'it', label: 'IT' },
+    { code: 'ru', label: 'RU' },
+    { code: 'hi', label: 'HI' },
+    { code: 'ar', label: 'AR' },
+    { code: 'id', label: 'ID' },
+    { code: 'tr', label: 'TR' },
 ];
 
 export const LanguageSwitcher = () => {

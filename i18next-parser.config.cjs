@@ -7,7 +7,7 @@ module.exports = {
         jsx: ['JsxLexer'],
         default: ['JavascriptLexer'],
     },
-    locales: ['en', 'ko', 'es', 'pt', 'zh', 'ja', 'fr', 'de', 'it'],
+    locales: ['en', 'ko', 'es', 'pt', 'zh', 'ja', 'fr', 'de', 'it', 'ru', 'hi', 'ar', 'id', 'tr'],
     output: 'src/locales/$LOCALE.json',
     input: ['src/**/*.{ts,tsx}'],
     sort: true,
