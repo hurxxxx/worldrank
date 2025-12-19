@@ -14,4 +14,5 @@ module.exports = {
     useKeysAsDefaultValue: true, // This is key for "Natural Language Keys"
     verbose: true,
     createOldCatalogs: false,
+    keepRemoved: true, // 기존 번역을 삭제하지 않음 (질문 번역 등 동적 키 보존)
 };

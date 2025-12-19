@@ -1,0 +1,140 @@
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh;
+    width: 100%;
+}
+
+/* Header */
+.layout-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--glass-border);
+    min-height: 56px;
+}
+
+.header-left,
+.header-right {
+    flex: 0 0 56px;
+    display: flex;
+    align-items: center;
+}
+
+.header-left {
+    justify-content: flex-start;
+}
+
+.header-right {
+    justify-content: flex-end;
+}
+
+.header-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+}
+
+.header-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.header-btn:hover {
+    background: rgba(0, 240, 255, 0.1);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.header-btn:active {
+    transform: scale(0.95);
+}
+
+/* Main content */
+.layout-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Footer */
+.layout-footer {
+    padding: var(--space-md);
+    text-align: center;
+    border-top: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+}
+
+.footer-brand {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    opacity: 0.6;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* Responsive */
+@media (max-width: 375px) {
+    .layout-header {
+        padding: var(--space-xs) var(--space-sm);
+        min-height: 48px;
+    }
+
+    .header-left,
+    .header-right {
+        flex: 0 0 48px;
+    }
+
+    .header-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+
+    .layout-footer {
+        padding: var(--space-sm);
+    }
+
+    .footer-brand {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 320px) {
+    .layout-header {
+        min-height: 44px;
+    }
+
+    .header-left,
+    .header-right {
+        flex: 0 0 40px;
+    }
+
+    .header-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+        border-radius: 10px;
+    }
+}

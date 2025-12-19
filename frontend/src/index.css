@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap');
 
 :root {
+  /* Dark theme (default) */
   --bg-color: #030305;
   --surface-color: #0e0e12;
   --text-primary: #ffffff;
@@ -15,6 +16,9 @@
 
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
+
+  --card-bg: rgba(255, 255, 255, 0.02);
+  --border: rgba(255, 255, 255, 0.1);
 
   --font-main: 'Outfit', sans-serif;
 

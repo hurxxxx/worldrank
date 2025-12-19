@@ -1,7 +1,5 @@
 .language-switcher {
-    position: absolute;
-    top: calc(var(--space-md) + var(--safe-area-inset-top));
-    right: calc(var(--space-md) + var(--safe-area-inset-right));
+    position: relative;
     z-index: 1000;
 }
 
@@ -98,11 +96,6 @@
 }
 
 @media (max-width: 480px) {
-    .language-switcher {
-        top: calc(var(--space-sm) + var(--safe-area-inset-top));
-        right: calc(var(--space-sm) + var(--safe-area-inset-right));
-    }
-
     .current-lang-btn {
         padding: 8px 14px;
         gap: 6px;
@@ -114,11 +107,6 @@
 }
 
 @media (max-width: 375px) {
-    .language-switcher {
-        top: calc(var(--space-xs) + var(--safe-area-inset-top));
-        right: calc(var(--space-xs) + var(--safe-area-inset-right));
-    }
-
     .current-lang-btn {
         padding: 8px 12px;
         font-size: 0.8rem;

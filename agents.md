@@ -10,3 +10,14 @@ Clichéd color schemes (particularly purple gradients on white backgrounds)
 Predictable layouts and component patterns
 Cookie-cutter design that lacks context-specific character
 Interpret creatively and make unexpected choices that feel genuinely designed for the context. Vary between light and dark themes, different fonts, different aesthetics. You still tend to converge on common choices (Space Grotesk, for example) across generations. Avoid this: it is critical that you think outside the box!
+
+## i18n (Internationalization)
+
+This project uses i18next for translations (14 languages supported).
+
+**Adding new translation keys:**
+1. Use `t('key_name')` in your component code
+2. Run `cd frontend && npm run i18n:parse` to extract keys to all locale files
+3. Edit locale files in `frontend/src/locales/` to add translations
+
+**DO NOT manually add keys to locale files** - always use the parser to maintain consistency across all 14 languages.

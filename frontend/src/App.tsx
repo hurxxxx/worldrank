@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Layout } from './components/Layout';
+import { AppSelector } from './components/AppSelector';
 import { Landing } from './components/Landing';
 import { Demographics } from './components/Demographics';
 import type { DemographicsData } from './components/Demographics';
 import { Quiz } from './components/Quiz';
 import { Result } from './components/Result';
-import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { AnimatePresence } from 'framer-motion';
 
 // Collect client-side data
@@ -48,7 +49,7 @@ async function submitQuizData(data: Record<string, unknown>) {
 
 function App() {
   const { i18n } = useTranslation();
-  const [view, setView] = useState<'landing' | 'demographics' | 'quiz' | 'result'>('landing');
+  const [view, setView] = useState<'home' | 'landing' | 'demographics' | 'quiz' | 'result'>('home');
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [demographics, setDemographics] = useState<DemographicsData | null>(null);
   const [startTime, setStartTime] = useState<number>(0);
@@ -58,6 +59,20 @@ function App() {
   useEffect(() => {
     setStartTime(Date.now());
   }, []);
+
+  const handleSelectApp = (appId: string) => {
+    if (appId === 'world-rank') {
+      setView('landing');
+    }
+  };
+
+  const goHome = () => setView('home');
+  const goBack = () => {
+    if (view === 'landing') setView('home');
+    else if (view === 'demographics') setView('landing');
+    else if (view === 'quiz') setView('demographics');
+    else if (view === 'result') setView('home');
+  };
 
   const startQuiz = () => setView('demographics');
 
@@ -96,19 +111,27 @@ function App() {
     setQuestionTimes([]);
     setDemographics(null);
     setStartTime(Date.now());
-    setView('landing');
+    setView('home');
   };
 
+  const showBack = view !== 'home';
+  const showHome = view !== 'home' && view !== 'landing';
+
   return (
-    <>
-      <LanguageSwitcher />
+    <Layout
+      showBack={showBack}
+      showHome={showHome}
+      onBack={goBack}
+      onHome={goHome}
+    >
       <AnimatePresence mode="wait">
+        {view === 'home' && <AppSelector onSelectApp={handleSelectApp} key="home" />}
         {view === 'landing' && <Landing onStart={startQuiz} key="landing" />}
         {view === 'demographics' && <Demographics onComplete={handleDemographics} key="demographics" />}
         {view === 'quiz' && <Quiz onFinish={finishQuiz} key="quiz" />}
         {view === 'result' && <Result answers={answers} onRestart={restart} key="result" />}
       </AnimatePresence>
-    </>
+    </Layout>
   );
 }
 
