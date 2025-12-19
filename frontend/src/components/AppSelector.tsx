@@ -32,27 +32,6 @@ export const AppSelector = ({ onSelectApp }: AppSelectorProps) => {
             icon: '🧾',
             available: true,
         },
-        {
-            id: 'coming-soon-1',
-            title: t('Coming Soon'),
-            description: t('app_coming_soon_desc'),
-            icon: '🔮',
-            available: false,
-        },
-        {
-            id: 'coming-soon-2',
-            title: t('Coming Soon'),
-            description: t('app_coming_soon_desc'),
-            icon: '✨',
-            available: false,
-        },
-        {
-            id: 'coming-soon-3',
-            title: t('Coming Soon'),
-            description: t('app_coming_soon_desc'),
-            icon: '🎯',
-            available: false,
-        },
     ];
 
     const handleAppClick = (app: AppInfo) => {
