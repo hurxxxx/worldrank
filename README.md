@@ -1,73 +1,113 @@
-# React + TypeScript + Vite
+# World Rank
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Discover where you stand among 8 billion people. Take our lifestyle quiz or calculate your global income ranking.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### World Rank (Lifestyle Quiz)
+- 20+ questions to measure your global lifestyle ranking
+- Categories: Infrastructure, Connectivity, Assets, Living Standards
+- Sophisticated Bayesian scoring algorithm
+- Results: Top X%, Tier badge, Estimated population
 
-## React Compiler
+### Income Rank (Income Calculator)
+- Calculate your global income ranking by entering annual income
+- Dual basis support: PPP (Purchasing Power Parity) / MER (Market Exchange Rate)
+- Based on WID.world 2024 data
+- On-device calculation (no income data uploaded)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Multilingual Support
+14 languages supported: English, Korean, Spanish, Portuguese, Chinese, Japanese, French, German, Italian, Russian, Hindi, Arabic, Indonesian, Turkish
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+| Area | Technology |
+|------|------------|
+| Frontend | React 19, TypeScript, Vite |
+| Backend | Express, SQLite (libSQL/Turso) |
+| Animation | Framer Motion |
+| i18n | i18next, react-i18next |
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Project Structure
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+world-rank/
+├── frontend/                # React + Vite + TypeScript
+│   ├── src/
+│   │   ├── components/      # React components
+│   │   ├── contexts/        # Context (consent management, etc.)
+│   │   ├── data/            # Questions, income thresholds
+│   │   ├── locales/         # Translation files (14 languages)
+│   │   └── utils/           # Utility functions
+│   └── package.json
+├── server/                  # Express backend
+│   ├── server.js            # API endpoints
+│   └── data/                # SQLite database
+└── package.json             # Root scripts
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Installation & Setup
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Requirements
+- Node.js 18+
+- npm
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Install
+
+```bash
+# Clone repository
+git clone https://github.com/hurxxxx/worldrank.git
+cd worldrank
+
+# Install all dependencies (frontend + server)
+npm run install:all
 ```
+
+### Development
+
+```bash
+# Frontend dev server (Vite)
+npm run dev
+
+# Backend server (dev mode)
+npm run server:dev
+```
+
+### Production
+
+```bash
+# Build frontend
+npm run build
+
+# Start production server
+npm run start
+```
+
+## Adding Translation Keys
+
+1. Use `t()` function in components:
+```tsx
+import { useTranslation } from 'react-i18next';
+
+const { t } = useTranslation();
+return <p>{t('your_translation_key')}</p>;
+```
+
+2. Run parser to extract keys:
+```bash
+cd frontend && npm run i18n:parse
+```
+
+3. Add translations in each language file under `frontend/src/locales/`
+
+## API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/submit` | POST | Submit quiz responses |
+| `/api/stats` | GET | Get recent responses (100) |
+| `/api/stats/summary` | GET | Aggregated statistics |
+
+## License
+
+MIT
