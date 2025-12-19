@@ -21,8 +21,27 @@
     line-height: 0.9;
     letter-spacing: -2px;
     background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+@media (max-width: 480px) {
+    .main-title {
+        font-size: 3rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+        margin-bottom: 3rem;
+        padding: 0 1rem;
+    }
+
+    .btn-primary {
+        padding: 1rem 3rem;
+        font-size: 1rem;
+        width: 80%;
+    }
 }
 
 .year-badge {
