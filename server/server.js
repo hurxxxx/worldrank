@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { readFileSync, appendFileSync, existsSync } from 'fs';
+import Database from 'better-sqlite3';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -16,8 +16,82 @@ app.use(express.json());
 const FRONTEND_DIST = join(__dirname, '..', 'frontend', 'dist');
 app.use(express.static(FRONTEND_DIST));
 
-// Data file path
-const DATA_FILE = join(__dirname, 'data', 'responses.jsonl');
+// SQLite Database
+const db = new Database(join(__dirname, 'data', 'responses.db'));
+
+// Create table if not exists
+db.exec(`
+  CREATE TABLE IF NOT EXISTS responses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp TEXT NOT NULL,
+
+    -- Geo data (from IP)
+    country TEXT,
+    city TEXT,
+    timezone_from_ip TEXT,
+
+    -- Demographics
+    age_group TEXT,
+    gender TEXT,
+
+    -- Quiz results
+    answers TEXT,
+    question_times TEXT,
+    total_quiz_time INTEGER,
+
+    -- Session info
+    session_duration INTEGER,
+    selected_language TEXT,
+
+    -- Client data
+    browser_language TEXT,
+    languages TEXT,
+    timezone TEXT,
+    device_type TEXT,
+    screen_width INTEGER,
+    screen_height INTEGER,
+    viewport_width INTEGER,
+    viewport_height INTEGER,
+    pixel_ratio REAL,
+    platform TEXT,
+    connection_type TEXT,
+
+    -- Request metadata
+    user_agent TEXT,
+    referer TEXT
+  )
+`);
+
+// Create indexes for common queries
+db.exec(`
+  CREATE INDEX IF NOT EXISTS idx_timestamp ON responses(timestamp);
+  CREATE INDEX IF NOT EXISTS idx_country ON responses(country);
+  CREATE INDEX IF NOT EXISTS idx_age_group ON responses(age_group);
+  CREATE INDEX IF NOT EXISTS idx_gender ON responses(gender);
+`);
+
+// Prepared statement for insert
+const insertStmt = db.prepare(`
+  INSERT INTO responses (
+    timestamp, country, city, timezone_from_ip,
+    age_group, gender,
+    answers, question_times, total_quiz_time,
+    session_duration, selected_language,
+    browser_language, languages, timezone, device_type,
+    screen_width, screen_height, viewport_width, viewport_height,
+    pixel_ratio, platform, connection_type,
+    user_agent, referer
+  ) VALUES (
+    ?, ?, ?, ?,
+    ?, ?,
+    ?, ?, ?,
+    ?, ?,
+    ?, ?, ?, ?,
+    ?, ?, ?, ?,
+    ?, ?, ?,
+    ?, ?
+  )
+`);
 
 // Helper: Get country from IP using free API
 async function getGeoFromIP(ip) {
@@ -52,26 +126,34 @@ app.post('/api/submit', async (req, res) => {
   try {
     const clientIP = getClientIP(req);
     const geo = await getGeoFromIP(clientIP);
+    const body = req.body;
 
-    const data = {
-      // Timestamp
-      timestamp: new Date().toISOString(),
-
-      // Geo data (from IP, but IP itself is NOT stored)
-      country: geo.country,
-      city: geo.city,
-      timezoneFromIP: geo.timezone,
-
-      // Data from client
-      ...req.body,
-
-      // Request metadata
-      userAgent: req.headers['user-agent'] || 'Unknown',
-      referer: req.headers['referer'] || 'Direct',
-    };
-
-    // Append to JSONL file (one JSON per line)
-    appendFileSync(DATA_FILE, JSON.stringify(data) + '\n');
+    insertStmt.run(
+      new Date().toISOString(),
+      geo.country,
+      geo.city,
+      geo.timezone,
+      body.ageGroup || null,
+      body.gender || null,
+      JSON.stringify(body.answers || []),
+      JSON.stringify(body.questionTimes || []),
+      body.totalQuizTime || null,
+      body.sessionDuration || null,
+      body.selectedLanguage || null,
+      body.browserLanguage || null,
+      body.languages || null,
+      body.timezone || null,
+      body.deviceType || null,
+      body.screenWidth || null,
+      body.screenHeight || null,
+      body.viewportWidth || null,
+      body.viewportHeight || null,
+      body.pixelRatio || null,
+      body.platform || null,
+      body.connectionType || null,
+      req.headers['user-agent'] || 'Unknown',
+      req.headers['referer'] || 'Direct'
+    );
 
     res.json({ success: true });
   } catch (error) {
@@ -80,20 +162,15 @@ app.post('/api/submit', async (req, res) => {
   }
 });
 
-// API: Get stats (optional, for admin)
+// API: Get stats
 app.get('/api/stats', (req, res) => {
   try {
-    if (!existsSync(DATA_FILE)) {
-      return res.json({ totalResponses: 0, responses: [] });
-    }
-
-    const content = readFileSync(DATA_FILE, 'utf-8');
-    const lines = content.trim().split('\n').filter(Boolean);
-    const responses = lines.map(line => JSON.parse(line));
+    const total = db.prepare('SELECT COUNT(*) as count FROM responses').get();
+    const recent = db.prepare('SELECT * FROM responses ORDER BY id DESC LIMIT 100').all();
 
     res.json({
-      totalResponses: responses.length,
-      responses: responses.slice(-100) // Last 100 responses
+      totalResponses: total.count,
+      responses: recent
     });
   } catch (error) {
     console.error('Error reading stats:', error);
@@ -101,9 +178,71 @@ app.get('/api/stats', (req, res) => {
   }
 });
 
+// API: Get aggregated stats
+app.get('/api/stats/summary', (req, res) => {
+  try {
+    const total = db.prepare('SELECT COUNT(*) as count FROM responses').get();
+
+    const byCountry = db.prepare(`
+      SELECT country, COUNT(*) as count
+      FROM responses
+      GROUP BY country
+      ORDER BY count DESC
+      LIMIT 20
+    `).all();
+
+    const byAgeGroup = db.prepare(`
+      SELECT age_group, COUNT(*) as count
+      FROM responses
+      WHERE age_group IS NOT NULL
+      GROUP BY age_group
+      ORDER BY age_group
+    `).all();
+
+    const byGender = db.prepare(`
+      SELECT gender, COUNT(*) as count
+      FROM responses
+      WHERE gender IS NOT NULL
+      GROUP BY gender
+    `).all();
+
+    const byDevice = db.prepare(`
+      SELECT device_type, COUNT(*) as count
+      FROM responses
+      GROUP BY device_type
+    `).all();
+
+    const byLanguage = db.prepare(`
+      SELECT selected_language, COUNT(*) as count
+      FROM responses
+      WHERE selected_language IS NOT NULL
+      GROUP BY selected_language
+      ORDER BY count DESC
+    `).all();
+
+    res.json({
+      totalResponses: total.count,
+      byCountry,
+      byAgeGroup,
+      byGender,
+      byDevice,
+      byLanguage
+    });
+  } catch (error) {
+    console.error('Error reading summary:', error);
+    res.status(500).json({ error: 'Failed to read summary' });
+  }
+});
+
 // SPA fallback - serve index.html for all other routes
 app.get('*', (req, res) => {
   res.sendFile(join(FRONTEND_DIST, 'index.html'));
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+  db.close();
+  process.exit();
 });
 
 app.listen(PORT, () => {
