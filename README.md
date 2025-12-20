@@ -14,7 +14,7 @@ Discover where you stand among 8 billion people. Take our lifestyle quiz or calc
 - Calculate your global income ranking by entering annual income
 - Dual basis support: PPP (Purchasing Power Parity) / MER (Market Exchange Rate)
 - Based on WID.world 2024 data
-- On-device calculation (no income data uploaded)
+- Calculated in-browser; anonymized results may be stored if you allow data collection
 
 ### Multilingual Support
 14 languages supported: English, Korean, Spanish, Portuguese, Chinese, Japanese, French, German, Italian, Russian, Hindi, Arabic, Indonesian, Turkish
@@ -104,7 +104,7 @@ cd frontend && npm run i18n:parse
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/submit` | POST | Submit quiz responses |
+| `/api/submit` | POST | Submit app responses (quiz + income) |
 | `/api/stats` | GET | Get recent responses (100) |
 | `/api/stats/summary` | GET | Aggregated statistics |
 

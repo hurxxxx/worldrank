@@ -4,16 +4,21 @@ import { useTranslation } from 'react-i18next';
 import type { IncomeBasis } from '../data/worldIncomeThresholds';
 import { WORLD_INCOME_THRESHOLDS_USD, WORLD_INCOME_WID } from '../data/worldIncomeThresholds';
 import { formatTopPercent, percentileFromIncome, topPercentFromIncome } from '../utils/incomeRank';
+import { useConsent } from '../contexts/useConsent';
 import './IncomeRank.css';
 
 // Parse URL parameters for shared results
-const getUrlParams = (): { income: number | null; basis: IncomeBasis | null } => {
+const getUrlParams = (): { income: number | null; basis: IncomeBasis | null; hh: boolean; adults: number | null } => {
   const params = new URLSearchParams(window.location.search);
   const income = params.get('income');
   const basis = params.get('basis');
+  const hh = params.get('hh');
+  const adults = params.get('adults');
   return {
     income: income ? parseFloat(income) : null,
     basis: (basis === 'PPP' || basis === 'MER') ? basis as IncomeBasis : null,
+    hh: hh === '1' || hh === 'true',
+    adults: adults ? Number.parseInt(adults, 10) : null,
   };
 };
 
@@ -34,16 +39,105 @@ function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value));
 }
 
+function parsePositiveInt(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const n = Number.parseInt(trimmed, 10);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return n;
+}
+
+function randomId() {
+  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function getOrCreateClientId() {
+  const key = 'world_rank_client_id';
+  try {
+    const existing = localStorage.getItem(key);
+    if (existing) return existing;
+    const created = randomId();
+    localStorage.setItem(key, created);
+    return created;
+  } catch {
+    return null;
+  }
+}
+
+function getAttributionData() {
+  const url = new URL(window.location.href);
+  const paramOrNull = (key: string) => url.searchParams.get(key) || null;
+
+  return {
+    landingUrl: url.toString(),
+    landingPath: `${url.pathname}${url.search}`,
+    documentReferrer: document.referrer || null,
+    utmSource: paramOrNull('utm_source'),
+    utmMedium: paramOrNull('utm_medium'),
+    utmCampaign: paramOrNull('utm_campaign'),
+    utmContent: paramOrNull('utm_content'),
+    utmTerm: paramOrNull('utm_term'),
+  };
+}
+
+function getClientData() {
+  return {
+    browserLanguage: navigator.language,
+    languages: navigator.languages?.join(',') || navigator.language,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    deviceType: /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+    screenWidth: window.screen.width,
+    screenHeight: window.screen.height,
+    viewportWidth: window.innerWidth,
+    viewportHeight: window.innerHeight,
+    pixelRatio: window.devicePixelRatio,
+    platform: navigator.platform,
+    connectionType: (navigator as Navigator & { connection?: { effectiveType?: string } }).connection?.effectiveType || 'unknown',
+  };
+}
+
+async function submitAppData(data: Record<string, unknown>) {
+  try {
+    const apiUrl = import.meta.env.PROD ? '/api/submit' : 'http://localhost:3000/api/submit';
+    const res = await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return res.ok;
+  } catch (error) {
+    console.error('Failed to submit data:', error);
+    return false;
+  }
+}
+
 export function IncomeRank() {
   const { t, i18n } = useTranslation();
+  const { canCollectData } = useConsent();
   const urlParams = getUrlParams();
   const [basis, setBasis] = useState<IncomeBasis>(urlParams.basis ?? 'PPP');
   const [incomeText, setIncomeText] = useState(urlParams.income ? urlParams.income.toString() : '');
-  const [submittedIncome, setSubmittedIncome] = useState<number | null>(urlParams.income);
+  const [isHouseholdIncome, setIsHouseholdIncome] = useState(urlParams.hh);
+  const [householdAdultsText, setHouseholdAdultsText] = useState(
+    urlParams.hh ? (urlParams.adults && urlParams.adults > 0 ? String(urlParams.adults) : '') : ''
+  );
+  const [showRefine, setShowRefine] = useState(false);
+  const [submittedRawIncome, setSubmittedRawIncome] = useState<number | null>(urlParams.income);
+  const [submittedIncome, setSubmittedIncome] = useState<number | null>(() => {
+    if (urlParams.income === null) return null;
+    if (!urlParams.hh) return urlParams.income;
+    const adults = urlParams.adults && urlParams.adults > 0 ? urlParams.adults : null;
+    return adults ? urlParams.income / adults : urlParams.income;
+  });
   const [isCalculating, setIsCalculating] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'skipped' | 'error'>('idle');
   const resultRef = useRef<HTMLDivElement>(null);
   const initialLoadRef = useRef(true);
+  const startedAtRef = useRef<number>(Date.now());
+  const sessionIdRef = useRef<string>(randomId());
+  const attributionRef = useRef(getAttributionData());
 
   // Clear URL params after initial load to keep URL clean for manual use
   useEffect(() => {
@@ -112,22 +206,101 @@ export function IncomeRank() {
     };
   }, [thresholds]);
 
+  const adultsParsed = useMemo(
+    () => (isHouseholdIncome ? parsePositiveInt(householdAdultsText) : null),
+    [isHouseholdIncome, householdAdultsText]
+  );
+
+  const medianMultiple = useMemo(() => {
+    if (submittedIncome === null) return null;
+    if (!highlight.median || highlight.median <= 0) return null;
+    return submittedIncome / highlight.median;
+  }, [submittedIncome, highlight.median]);
+
+  const nextMilestone = useMemo(() => {
+    if (submittedIncome === null) return null;
+    const candidates: Array<{ label: string; threshold: number | null }> = [
+      { label: t('Top 10%'), threshold: highlight.top10 },
+      { label: t('Top 1%'), threshold: highlight.top1 },
+      { label: t('Top 0.1%'), threshold: highlight.top01 },
+    ];
+
+    const next = candidates.find((c) => c.threshold !== null && submittedIncome < (c.threshold as number));
+    if (!next || next.threshold === null) return { label: t('Top 0.1%'), threshold: highlight.top01, delta: 0, reached: true };
+    const delta = Math.max(0, next.threshold - submittedIncome);
+    return { label: next.label, threshold: next.threshold, delta, reached: delta <= 0 };
+  }, [submittedIncome, highlight.top1, highlight.top01, highlight.top10, t]);
+
   const handleCheck = () => {
     const val = parseIncomeInput(incomeText);
     if (val === null) return;
 
+    const adults = isHouseholdIncome ? adultsParsed : null;
+    if (isHouseholdIncome && adults === null) return;
+
+    const effectiveIncome = isHouseholdIncome && adults ? val / adults : val;
+
     setIsCalculating(true);
+    setSaveState('idle');
+    setSubmittedRawIncome(val);
     setSubmittedIncome(null);
 
     // Simulate calculation delay for effect
     setTimeout(() => {
-      setSubmittedIncome(val);
+      setSubmittedIncome(effectiveIncome);
       setIsCalculating(false);
       // Wait for re-render then scroll
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }, 100);
     }, 800);
+
+    if (!canCollectData()) {
+      setSaveState('skipped');
+      return;
+    }
+
+    const computedPercentile = percentileFromIncome(effectiveIncome, thresholds);
+    const computedTopPercent = topPercentFromIncome(effectiveIncome, thresholds);
+    const computedMedianMultiple = highlight.median ? effectiveIncome / highlight.median : null;
+
+    setSaveState('saving');
+    submitAppData({
+      // App identity
+      appId: 'income-rank',
+
+      // Session info
+      sessionDuration: Date.now() - startedAtRef.current,
+      selectedLanguage: i18n.language,
+      clientId: getOrCreateClientId(),
+      sessionId: sessionIdRef.current,
+      sessionStartedAt: new Date(startedAtRef.current).toISOString(),
+      sessionFinishedAt: new Date().toISOString(),
+      completed: true,
+
+      // Attribution + client data
+      ...attributionRef.current,
+      ...getClientData(),
+
+      // App-specific payload
+      payload: {
+        incomeAnnualUsd: val,
+        basis,
+        isHouseholdIncome,
+        householdAdults: adults,
+        effectiveIncomeAnnualUsd: effectiveIncome,
+        percentile: computedPercentile,
+        topPercent: computedTopPercent,
+        medianMultiple: computedMedianMultiple,
+        wid: {
+          year: WORLD_INCOME_WID.year,
+          variable: WORLD_INCOME_WID.variable,
+          countryCode: WORLD_INCOME_WID.countryCodeByBasis[basis],
+          sourceFile: WORLD_INCOME_WID.sourceFileByBasis[basis],
+        },
+      },
+    })
+      .then((ok) => setSaveState(ok ? 'saved' : 'error'));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -139,7 +312,14 @@ export function IncomeRank() {
   const handleShare = async () => {
     // Build share URL with parameters
     const baseUrl = window.location.origin + window.location.pathname;
-    const shareUrl = `${baseUrl}?app=income-rank&income=${submittedIncome}&basis=${basis}`;
+    const params = new URLSearchParams();
+    params.set('app', 'income-rank');
+    if (submittedRawIncome !== null) params.set('income', String(submittedRawIncome));
+    params.set('basis', basis);
+    if (isHouseholdIncome) params.set('hh', '1');
+    const adults = isHouseholdIncome ? adultsParsed : null;
+    if (adults) params.set('adults', String(adults));
+    const shareUrl = `${baseUrl}?${params.toString()}`;
 
     const shareData = {
       title: 'Awesome Rank',
@@ -169,6 +349,12 @@ export function IncomeRank() {
   const basisLabel = basis === 'PPP' ? t('PPP (cost of living adjusted)') : t('Market exchange rate (MER)');
   const worldCode = WORLD_INCOME_WID.countryCodeByBasis[basis];
   const source = WORLD_INCOME_WID.sourceFileByBasis[basis];
+  const effectiveIncomeLabel = useMemo(() => {
+    if (!isHouseholdIncome || submittedRawIncome === null) return null;
+    if (!adultsParsed) return null;
+    const effective = submittedRawIncome / adultsParsed;
+    return usd.format(effective);
+  }, [adultsParsed, isHouseholdIncome, submittedRawIncome, usd]);
 
   return (
     <motion.div
@@ -195,6 +381,10 @@ export function IncomeRank() {
           <p className="income-rank-subtitle">
             {t('Enter your annual income to estimate where you stand globally')}
           </p>
+          <div className="income-tip">
+            <span className="income-tip-dot" />
+            <span className="income-tip-text">{t('Optional details make the comparison more accurate')}</span>
+          </div>
         </motion.div>
 
         <motion.div
@@ -225,11 +415,25 @@ export function IncomeRank() {
               <button
                 className="income-check-btn"
                 onClick={handleCheck}
-                disabled={!incomeText || isCalculating}
+                disabled={!incomeText || isCalculating || (isHouseholdIncome && !adultsParsed)}
               >
                 {isCalculating ? t('Calculating...') : t('Check Rank')}
               </button>
             </div>
+            {isHouseholdIncome && (
+              <div className="income-inline-note">
+                {adultsParsed ? (
+                  <span>
+                    {t('Household income split across {{adults}} adults → {{effective}} per adult', {
+                      adults: adultsParsed,
+                      effective: effectiveIncomeLabel,
+                    })}
+                  </span>
+                ) : (
+                  <span className="income-inline-warn">{t('Add adults to adjust household income')}</span>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="income-row">
@@ -252,6 +456,76 @@ export function IncomeRank() {
                 <span className="basis-chip-sub">{t('Exchange rate')}</span>
               </button>
             </div>
+          </div>
+
+          <div className="income-row">
+            <button
+              type="button"
+              className={`refine-toggle ${showRefine ? 'open' : ''}`}
+              onClick={() => setShowRefine((v) => !v)}
+              aria-expanded={showRefine}
+            >
+              <span className="refine-toggle-title">{t('Refine (optional)')}</span>
+              <span className="refine-toggle-sub">{t('More details → more accurate comparison')}</span>
+              <span className="refine-toggle-icon" aria-hidden="true">▾</span>
+            </button>
+
+            <AnimatePresence initial={false}>
+              {showRefine && (
+                <motion.div
+                  className="refine-panel"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="refine-field">
+                    <label className="refine-check">
+                      <input
+                        type="checkbox"
+                        checked={isHouseholdIncome}
+                        onChange={(e) => setIsHouseholdIncome(e.target.checked)}
+                      />
+                      <span className="refine-check-text">{t('This is household income')}</span>
+                    </label>
+                    <div className="refine-help">
+                      {t('WID thresholds are “equal-split adults”. If you enter household income, we can split by adults for a fairer comparison.')}
+                    </div>
+                  </div>
+
+                  <AnimatePresence initial={false}>
+                    {isHouseholdIncome && (
+                      <motion.div
+                        className="refine-field"
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.18 }}
+                      >
+                        <label className="refine-label" htmlFor="adults-input">
+                          {t('Adults in household')}
+                        </label>
+                        <div className="refine-input-row">
+                          <input
+                            id="adults-input"
+                            className="refine-input"
+                            inputMode="numeric"
+                            autoComplete="off"
+                            placeholder={t('Example: 2')}
+                            value={householdAdultsText}
+                            onChange={(e) => setHouseholdAdultsText(e.target.value.replace(/[^\d]/g, ''))}
+                            aria-invalid={isHouseholdIncome && !adultsParsed}
+                          />
+                          {!adultsParsed && (
+                            <span className="refine-error">{t('Required')}</span>
+                          )}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
 
@@ -289,6 +563,17 @@ export function IncomeRank() {
                       </span>
                       <span className="result-meta-dot">•</span>
                       <span className="result-meta">{basisLabel}</span>
+                      {saveState !== 'idle' && (
+                        <>
+                          <span className="result-meta-dot">•</span>
+                          <span className={`result-meta result-save ${saveState}`}>
+                            {saveState === 'saving' ? t('Saving…') :
+                              saveState === 'saved' ? t('Saved') :
+                                saveState === 'skipped' ? t('Not saved') :
+                                  t('Save failed')}
+                          </span>
+                        </>
+                      )}
                     </p>
                   </div>
                   <div className="result-stamp" aria-label={t('Income rank result')}>
@@ -314,6 +599,30 @@ export function IncomeRank() {
                       {highlight.median ? usd.format(highlight.median) : '—'}
                     </div>
                     <div className="detail-sub">{t('Global')}</div>
+                  </div>
+
+                  <div className="detail-card">
+                    <div className="detail-label">{t('Your income vs median')}</div>
+                    <div className="detail-value">
+                      {medianMultiple ? `${medianMultiple.toLocaleString(i18n.language, { maximumFractionDigits: medianMultiple < 10 ? 2 : 1 })}×` : '—'}
+                    </div>
+                    <div className="detail-sub">{t('times the median')}</div>
+                  </div>
+
+                  <div className="detail-card">
+                    <div className="detail-label">{t('Next milestone')}</div>
+                    <div className="detail-value mono">
+                      {nextMilestone
+                        ? nextMilestone.delta > 0 ? `+${usd.format(nextMilestone.delta)}` : '✓'
+                        : '—'}
+                    </div>
+                    <div className="detail-sub">
+                      {nextMilestone
+                        ? nextMilestone.delta > 0
+                          ? t('to reach {{milestone}}', { milestone: nextMilestone.label })
+                          : t('Already {{milestone}}', { milestone: nextMilestone.label })
+                        : t('per year')}
+                    </div>
                   </div>
 
                   <div className="detail-card">
@@ -352,7 +661,7 @@ export function IncomeRank() {
                   <span className="empty-text">{t('Type an amount to see your rank')}</span>
                 </div>
                 <p className="empty-note">
-                  {t('This calculator runs on-device — your income is not uploaded')}
+                  {t('Results are calculated instantly. If you allow data collection, we save anonymized results to improve global stats.')}
                 </p>
               </motion.div>
             )}

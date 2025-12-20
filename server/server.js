@@ -3,6 +3,7 @@ import cors from 'cors';
 import { createClient } from '@libsql/client';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { existsSync, mkdirSync } from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -15,6 +16,13 @@ app.use(express.json());
 // Serve static files (frontend build)
 const FRONTEND_DIST = join(__dirname, '..', 'frontend', 'dist');
 app.use(express.static(FRONTEND_DIST));
+
+// Ensure data directory exists for local SQLite database
+const dataDir = join(__dirname, 'data');
+if (!existsSync(dataDir)) {
+  mkdirSync(dataDir, { recursive: true });
+  console.log('Created data directory:', dataDir);
+}
 
 // Turso Database (libSQL) - supports both local file and remote Turso
 const db = createClient({
@@ -93,7 +101,10 @@ async function initDatabase() {
 
       -- Request metadata
       user_agent TEXT,
-      referer TEXT
+      referer TEXT,
+
+      -- App-specific blob for non-quiz tools (JSON string)
+      app_payload TEXT
     )
   `);
 
@@ -101,6 +112,7 @@ async function initDatabase() {
   const columnsToAdd = {
     country_code: 'TEXT',
     app_id: 'TEXT',
+    app_payload: 'TEXT',
     quiz_version: 'TEXT',
     question_set_id: 'TEXT',
     score_algo_version: 'TEXT',
@@ -195,6 +207,9 @@ app.post('/api/submit', async (req, res) => {
     const clientIP = getClientIP(req);
     const geo = await getGeoFromIP(clientIP);
     const body = req.body;
+    const appPayload = body.payload === undefined
+      ? null
+      : (typeof body.payload === 'string' ? body.payload : JSON.stringify(body.payload));
 
     await db.execute({
       sql: `
@@ -211,7 +226,8 @@ app.post('/api/submit', async (req, res) => {
           browser_language, languages, timezone, device_type,
           screen_width, screen_height, viewport_width, viewport_height,
           pixel_ratio, platform, connection_type,
-          user_agent, referer
+          user_agent, referer,
+          app_payload
         ) VALUES (
           ?, ?, ?, ?, ?,
           ?, ?, ?, ?,
@@ -225,7 +241,8 @@ app.post('/api/submit', async (req, res) => {
           ?, ?, ?, ?,
           ?, ?, ?, ?,
           ?, ?, ?,
-          ?, ?
+          ?, ?,
+          ?
         )
       `,
       args: [
@@ -276,7 +293,8 @@ app.post('/api/submit', async (req, res) => {
         body.platform || null,
         body.connectionType || null,
         req.headers['user-agent'] || 'Unknown',
-        req.headers['referer'] || 'Direct'
+        req.headers['referer'] || 'Direct',
+        appPayload
       ]
     });
 
