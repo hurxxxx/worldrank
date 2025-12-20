@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
+import { trackEvent, GA_EVENTS } from '../utils/analytics';
 import './LanguageSwitcher.css';
 
 const languages = [
@@ -61,6 +62,7 @@ export const LanguageSwitcher = () => {
     }, []);
 
     const handleLanguageChange = (code: string) => {
+        trackEvent(GA_EVENTS.LANGUAGE_CHANGE, { language: code });
         i18n.changeLanguage(code);
         setIsOpen(false);
     };

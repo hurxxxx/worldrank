@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { questions } from '../data/questions';
+import { trackEvent, GA_EVENTS } from '../utils/analytics';
 import './Quiz.css';
 
 interface QuizProps {
@@ -46,6 +47,13 @@ export const Quiz = ({ onFinish }: QuizProps) => {
 
         setAnswers(newAnswers);
         setQuestionTimes(newTimes);
+
+        // Track quiz answer
+        trackEvent(GA_EVENTS.QUIZ_ANSWER, {
+            question_index: index,
+            question_id: question.id,
+            answer: answer ? 'yes' : 'no',
+        });
 
         // Move to next question or finish
         if (index < questions.length - 1) {

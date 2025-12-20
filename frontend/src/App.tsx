@@ -14,6 +14,7 @@ import { useConsent } from './contexts/useConsent';
 import { AnimatePresence } from 'framer-motion';
 import { calculateScore, SCORE_ALGO_VERSION } from './utils/scoreCalculator';
 import { QUESTION_IDS, QUESTION_SET_ID } from './data/questions';
+import { trackEvent, trackPageView, GA_EVENTS } from './utils/analytics';
 
 const APP_ID = 'world-rank';
 const QUIZ_VERSION = 'v1';
@@ -135,6 +136,11 @@ function AppContent() {
     startTimeRef.current = Date.now();
   }, []);
 
+  // Track page view on view change
+  useEffect(() => {
+    trackPageView(view);
+  }, [view]);
+
   const handleSelectApp = (appId: string) => {
     if (appId === 'world-rank') {
       setView('landing');
@@ -165,6 +171,13 @@ function AppContent() {
 
     // Calculate score
     const scoreResult = calculateScore(finalAnswers);
+
+    // Track quiz completion
+    trackEvent(GA_EVENTS.QUIZ_COMPLETE, {
+      score: scoreResult.score,
+      tier: scoreResult.tier,
+      yes_count: scoreResult.yesCount,
+    });
 
     // Submit all collected data
     const sessionDuration = Date.now() - startTimeRef.current;
