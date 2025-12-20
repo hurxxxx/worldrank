@@ -95,43 +95,36 @@ export const Quiz = ({ onFinish }: QuizProps) => {
                         className="question-card glass-panel"
                     >
                         <div className="question-header">
-                            {index > 0 && (
-                                <motion.button
-                                    className="btn-back"
-                                    onClick={handleBack}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    aria-label={t('Back')}
-                                >
-                                    ←
-                                </motion.button>
-                            )}
+                            <motion.button
+                                className={`btn-back ${index === 0 ? 'hidden' : ''}`}
+                                onClick={handleBack}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                aria-label={t('Back')}
+                                disabled={index === 0}
+                            >
+                                ←
+                            </motion.button>
                             <div className="category-badge">{t(question.category).split('(')[0].trim()}</div>
                         </div>
                         <h2 className="question-text">{t(question.id)}</h2>
 
                         <div className="options-grid">
-                            <motion.button
-                                key={`yes-${question.id}`}
+                            <button
                                 className={`btn-option yes ${answers[index] === true ? 'selected' : ''}`}
                                 onClick={() => handleAnswer(true)}
-                                whileHover={{ scale: 1.02, backgroundColor: "rgba(0, 240, 255, 0.2)" }}
-                                whileTap={{ scale: 0.98 }}
                             >
                                 {t('YES')}
                                 <span className="key-hint">{t('Yes_Hint')}</span>
-                            </motion.button>
+                            </button>
 
-                            <motion.button
-                                key={`no-${question.id}`}
+                            <button
                                 className={`btn-option no ${answers[index] === false ? 'selected' : ''}`}
                                 onClick={() => handleAnswer(false)}
-                                whileHover={{ scale: 1.02, backgroundColor: "rgba(255, 50, 50, 0.2)" }}
-                                whileTap={{ scale: 0.98 }}
                             >
                                 {t('NO')}
                                 <span className="key-hint">{t('No_Hint')}</span>
-                            </motion.button>
+                            </button>
                         </div>
                     </motion.div>
                 </AnimatePresence>

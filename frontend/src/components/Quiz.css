@@ -37,7 +37,8 @@
 
 .quiz-content {
     position: relative;
-    min-height: clamp(340px, 55vh, 400px);
+    min-height: 380px;
+    overflow: hidden;
 }
 
 .question-card {
@@ -52,6 +53,11 @@
     align-items: center;
     gap: var(--space-sm);
     margin-bottom: clamp(1rem, 4vw, 1.5rem);
+    min-height: 36px;
+}
+
+.btn-back.hidden {
+    visibility: hidden;
 }
 
 .btn-back {
@@ -110,9 +116,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
+    cursor: pointer;
 }
 
 .btn-option.yes {
@@ -187,10 +194,22 @@
     }
 }
 
-/* Touch feedback for mobile */
+/* Desktop hover effects */
+@media (hover: hover) and (pointer: fine) {
+    .btn-option.yes:hover {
+        background: rgba(0, 240, 255, 0.15);
+        border-color: var(--primary-color);
+    }
+
+    .btn-option.no:hover {
+        background: rgba(255, 100, 100, 0.15);
+        border-color: rgba(255, 100, 100, 0.6);
+    }
+}
+
+/* Touch feedback for mobile - use opacity only, no transform */
 @media (hover: none) and (pointer: coarse) {
     .btn-option:active {
-        transform: scale(0.98);
-        opacity: 0.9;
+        opacity: 0.8;
     }
 }
