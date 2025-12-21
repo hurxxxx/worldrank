@@ -13,11 +13,36 @@ Interpret creatively and make unexpected choices that feel genuinely designed fo
 
 ## i18n (Internationalization)
 
-This project uses i18next for translations (14 languages supported).
+This project uses i18next for translations (30+ languages supported).
 
-**Adding new translation keys:**
-1. Use `t('key_name')` in your component code
+### Translation Key Convention (CRITICAL)
+
+**Always use English original text as the translation key:**
+```tsx
+// CORRECT
+t('Where do you rank among 8 billion people?')
+t('Enter your annual income')
+
+// WRONG - Never use abbreviated keys
+t('app_desc')           // ❌
+t('income_input_label') // ❌
+```
+
+**Locale file format:**
+```json
+// en.json - key equals value
+"Submit": "Submit"
+
+// ko.json - key is English, value is translation
+"Submit": "제출"
+```
+
+### Workflow
+
+1. Use `t('Full English sentence')` in your component code
 2. Run `cd frontend && npm run i18n:parse` to extract keys to all locale files
-3. Edit locale files in `frontend/src/locales/` to add translations
+3. Fill `en.json` with key = value (English text)
+4. Add translations to other locale files (`ko.json`, `ja.json`, etc.)
 
-**DO NOT manually add keys to locale files** - always use the parser to maintain consistency across all 14 languages.
+**DO NOT manually add keys to locale files** - always use the parser to maintain consistency.
+**DO NOT use abbreviated keys** - always use the full English sentence as the key.

@@ -18,14 +18,38 @@ world-rank/
 
 ## i18n (Internationalization) Usage
 
+### Translation Key Convention (IMPORTANT)
+
+**Use English original text as the translation key:**
+```tsx
+// CORRECT - English sentence as key
+t('Where do you rank among 8 billion people?')
+
+// WRONG - Do NOT use abbreviated keys
+t('app_world_rank_desc')  // ❌ Don't do this
+```
+
+This pattern:
+- Key = English original sentence
+- Value = Translated text (for English, key equals value)
+
+Example in locale files:
+```json
+// en.json
+"Where do you rank among 8 billion people?": "Where do you rank among 8 billion people?"
+
+// ko.json
+"Where do you rank among 8 billion people?": "80억 인구 중 당신의 위치는?"
+```
+
 ### Adding New Translation Keys
 
-1. **Use `t()` function in components:**
+1. **Use `t()` function with English text in components:**
    ```tsx
    import { useTranslation } from 'react-i18next';
 
    const { t } = useTranslation();
-   return <p>{t('your_translation_key')}</p>;
+   return <p>{t('Enter your annual income to see your global rank')}</p>;
    ```
 
 2. **Run the parser to extract keys:**
@@ -34,30 +58,37 @@ world-rank/
    ```
    This automatically:
    - Scans all source files for `t('key')` calls
-   - Adds new keys to all 14 locale files
+   - Adds new keys to all locale files (with empty values)
    - Removes unused keys
 
-3. **Translate the new keys:**
-   - Edit files in `frontend/src/locales/`
-   - Supported languages: en, ko, es, pt, zh, ja, fr, de, it, ru, hi, ar, id, tr
+3. **Fill in the translations:**
+   - For `en.json`: Set value = key (English text)
+   - For other locales: Add translated text as value
+   - Supported languages: en, ko, es, pt, zh, ja, fr, de, it, ru, hi, ar, id, tr, plus Baltic/Nordic languages
 
 ### Important Notes
 
 - **DO NOT manually add keys to locale files** - use `npm run i18n:parse`
+- **DO NOT use abbreviated keys** like `btn_submit`, `msg_error` - use full English sentences
 - Parser warns about dynamic keys like `t(variable)` - these must be added manually if needed
 - Default fallback language is English (`en`)
+- After running parser, `en.json` will have empty values - fill them with the same English text as the key
 
 ### Example Workflow
 
 ```tsx
-// 1. Add translation in component
-<button>{t('new_button_label')}</button>
+// 1. Add translation in component with English text as key
+<button>{t('Submit your response')}</button>
 
 // 2. Run parser
 // cd frontend && npm run i18n:parse
 
-// 3. Edit locale files to add translations
-// frontend/src/locales/ko.json: "new_button_label": "새 버튼"
+// 3. Fill en.json (key = value for English)
+// "Submit your response": "Submit your response"
+
+// 4. Add translations to other locale files
+// ko.json: "Submit your response": "응답 제출"
+// ja.json: "Submit your response": "回答を送信"
 ```
 
 ## Development Commands
