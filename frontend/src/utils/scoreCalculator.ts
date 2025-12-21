@@ -1,161 +1,105 @@
 import { questions } from '../data/questions';
 
-export const SCORE_ALGO_VERSION = 'v1-jeffreys-0.5-0.5-level-log';
+export const SCORE_ALGO_VERSION = 'v2-irt-1d-normal-map';
 
-const getLevelNumber = (category: string) => {
-    const match = category.match(/Level\s*(\d+)/i);
-    return match ? Number.parseInt(match[1], 10) : 1;
-};
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
 
-const getLevelExponent = (level: number) => {
-    return Math.min(5, Math.max(1, 6 - level));
-};
+const sigmoid = (x: number) => 1 / (1 + Math.exp(-x));
 
-const JEFFREYS_PRIOR_ALPHA = 0.5;
-const JEFFREYS_PRIOR_BETA = 0.5;
+const logit = (p: number) => Math.log(p / (1 - p));
 
-const levelRate = (yesCount: number, totalCount: number) =>
-    (yesCount + JEFFREYS_PRIOR_ALPHA) / (totalCount + JEFFREYS_PRIOR_ALPHA + JEFFREYS_PRIOR_BETA);
+const difficulties = questions.map((q) => -logit(q.probability));
 
-const computeYesCountDistribution = (questionIndices: number[]) => {
-    let dp = new Array<number>(questionIndices.length + 1).fill(0);
-    dp[0] = 1;
+function erf(x: number) {
+  const sign = x >= 0 ? 1 : -1;
+  const ax = Math.abs(x);
 
-    for (const questionIndex of questionIndices) {
-        const pYes = questions[questionIndex].probability;
-        const next = new Array<number>(dp.length).fill(0);
-        for (let yesCount = 0; yesCount < dp.length; yesCount += 1) {
-            const p = dp[yesCount];
-            if (p === 0) continue;
+  // Abramowitz and Stegun 7.1.26
+  const a1 = 0.254829592;
+  const a2 = -0.284496736;
+  const a3 = 1.421413741;
+  const a4 = -1.453152027;
+  const a5 = 1.061405429;
+  const p = 0.3275911;
 
-            next[yesCount] += p * (1 - pYes);
-            if (yesCount + 1 < dp.length) next[yesCount + 1] += p * pYes;
-        }
-        dp = next;
+  const t = 1 / (1 + p * ax);
+  const y =
+    1 -
+    ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) *
+      t *
+      Math.exp(-ax * ax);
+
+  return sign * y;
+}
+
+function normCdf(x: number) {
+  return 0.5 * (1 + erf(x / Math.SQRT2));
+}
+
+export interface TierInfo {
+  key: string;
+  color: string;
+}
+
+export function getTierInfo(score: number): TierInfo {
+  if (score < 0.1) return { key: 'Singularity Class', color: '#ff00ff' };
+  if (score < 0.5) return { key: 'Visionary Elite', color: '#ff0055' };
+  if (score < 1) return { key: 'Top 1% Elite', color: '#00f3ff' };
+  if (score < 5) return { key: 'World Class', color: '#ffd700' };
+  if (score < 15) return { key: 'High Achiever', color: '#00f3ff' };
+  if (score < 40) return { key: 'Global Middle Class', color: '#4cd137' };
+  if (score < 70) return { key: 'Aspiring Global', color: '#fbc531' };
+  return { key: 'Global Citizen', color: '#a0a0a0' };
+}
+
+function estimateThetaMap(answers: boolean[]) {
+  const n = Math.min(answers.length, difficulties.length);
+  if (n === 0) return 0;
+
+  // Prior: theta ~ Normal(0, 1)
+  let theta = 0;
+
+  for (let iter = 0; iter < 40; iter += 1) {
+    let grad = -theta;
+    let hess = -1;
+
+    for (let i = 0; i < n; i += 1) {
+      const pYes = sigmoid(theta - difficulties[i]);
+      const y = answers[i] ? 1 : 0;
+      grad += y - pYes;
+      hess += -pYes * (1 - pYes);
     }
 
-    return dp;
-};
+    const step = grad / hess;
+    theta -= step;
+    if (Math.abs(step) < 1e-8) break;
+  }
 
-const levelModel = (() => {
-    const byLevel = new Map<number, number[]>();
-    for (let idx = 0; idx < questions.length; idx += 1) {
-        const level = getLevelNumber(questions[idx].category);
-        const existing = byLevel.get(level);
-        if (existing) existing.push(idx);
-        else byLevel.set(level, [idx]);
-    }
-
-    const levels = Array.from(byLevel.keys()).sort((a, b) => a - b);
-    const data = levels.map((level) => {
-        const indices = byLevel.get(level) ?? [];
-        return {
-            level,
-            exponent: getLevelExponent(level),
-            indices,
-            count: indices.length,
-            yesCountDistribution: computeYesCountDistribution(indices)
-        };
-    });
-
-    const exponentSum = data.reduce((sum, l) => sum + l.exponent, 0);
-
-    const compositeIndexFromYesCounts = (yesCounts: number[]) => {
-        let weightedLogSum = 0;
-        for (let i = 0; i < data.length; i += 1) {
-            const rate = levelRate(yesCounts[i] ?? 0, data[i].count);
-            weightedLogSum += data[i].exponent * Math.log(rate);
-        }
-        return Math.exp(weightedLogSum / exponentSum);
-    };
-
-    return { data, exponentSum, compositeIndexFromYesCounts };
-})();
-
-const lowerBoundByScore = (sortedScores: Array<{ score: number }>, target: number) => {
-    let lo = 0;
-    let hi = sortedScores.length;
-    while (lo < hi) {
-        const mid = (lo + hi) >> 1;
-        if (sortedScores[mid].score < target) lo = mid + 1;
-        else hi = mid;
-    }
-    return lo;
-};
-
-const globalScoreTable = (() => {
-    const entries: Array<{ score: number; probability: number }> = [];
-    const yesCounts = new Array<number>(levelModel.data.length).fill(0);
-
-    const walk = (levelIndex: number, probability: number) => {
-        if (levelIndex >= levelModel.data.length) {
-            entries.push({ score: levelModel.compositeIndexFromYesCounts(yesCounts), probability });
-            return;
-        }
-
-        const dp = levelModel.data[levelIndex].yesCountDistribution;
-        for (let k = 0; k < dp.length; k += 1) {
-            const p = dp[k];
-            if (p === 0) continue;
-            yesCounts[levelIndex] = k;
-            walk(levelIndex + 1, probability * p);
-        }
-    };
-
-    walk(0, 1);
-
-    entries.sort((a, b) => a.score - b.score);
-
-    const tailProbability = new Array<number>(entries.length);
-    let acc = 0;
-    for (let i = entries.length - 1; i >= 0; i -= 1) {
-        acc += entries[i].probability;
-        tailProbability[i] = acc;
-    }
-
-    return { entries, tailProbability };
-})();
+  return theta;
+}
 
 export interface ScoreResult {
-    score: number;        // Top X% (0-100)
-    tier: string;         // Tier name (English key)
-    yesCount: number;     // Total yes answers
-    totalQuestions: number;
+  score: number; // Top X% (0-100), smaller is better
+  tier: string; // Tier name (English key)
+  yesCount: number;
+  totalQuestions: number;
 }
 
 export function calculateScore(answers: boolean[]): ScoreResult {
-    const userLevelYesCounts = levelModel.data.map((level) =>
-        level.indices.reduce((count, questionIndex) => count + (answers[questionIndex] ? 1 : 0), 0)
-    );
-    const userCompositeIndex = levelModel.compositeIndexFromYesCounts(userLevelYesCounts);
+  const theta = estimateThetaMap(answers);
+  const topShare = clamp(1 - normCdf(theta), 0, 1);
+  const score = topShare * 100;
 
-    const startIndex = lowerBoundByScore(globalScoreTable.entries, userCompositeIndex);
-    const topShareRaw = startIndex < globalScoreTable.tailProbability.length
-        ? globalScoreTable.tailProbability[startIndex]
-        : 0;
-    const topShare = Math.min(1, Math.max(0, topShareRaw));
+  const tier = getTierInfo(score).key;
+  const yesCount = answers.filter(Boolean).length;
 
-    const score = topShare * 100;
-
-    // Determine Tier
-    let tier = "Global Citizen";
-    if (score < 0.000001) { tier = "Singularity Class"; }
-    else if (score < 0.0001) { tier = "Visionary Elite"; }
-    else if (score < 0.01) { tier = "World Class"; }
-    else if (score < 1) { tier = "Top 1% Elite"; }
-    else if (score < 10) { tier = "High Achiever"; }
-    else if (score < 30) { tier = "Global Middle Class"; }
-    else if (score < 60) { tier = "Aspiring Global"; }
-
-    const yesCount = answers.filter(a => a).length;
-
-    return {
-        score,
-        tier,
-        yesCount,
-        totalQuestions: answers.length
-    };
+  return {
+    score,
+    tier,
+    yesCount,
+    totalQuestions: answers.length,
+  };
 }
 
-// Re-export for Result component
-export { levelModel, globalScoreTable, lowerBoundByScore };

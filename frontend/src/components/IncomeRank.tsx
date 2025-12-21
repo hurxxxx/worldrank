@@ -8,6 +8,9 @@ import { getIncomeClass, getPovertyStatus, POVERTY_LINES, CONSUMER_CLASS } from 
 import { useConsent } from '../contexts/useConsent';
 import './IncomeRank.css';
 
+// World population constant (2024 estimate)
+const WORLD_POPULATION = 8_000_000_000;
+
 // Parse URL parameters for shared results
 const getUrlParams = (): { income: number | null; basis: IncomeBasis | null } => {
   const params = new URLSearchParams(window.location.search);
@@ -252,6 +255,13 @@ export function IncomeRank() {
     if (topPercent === null) return null;
     if (!Number.isFinite(topPercent) || topPercent <= 0) return null;
     return Math.max(1, Math.round(100 / topPercent));
+  }, [topPercent]);
+
+  // Calculate absolute number of people in this top percentile group
+  const peopleInGroup = useMemo(() => {
+    if (topPercent === null) return null;
+    if (!Number.isFinite(topPercent) || topPercent <= 0) return null;
+    return Math.round(WORLD_POPULATION * (topPercent / 100));
   }, [topPercent]);
 
   const nextMilestone = useMemo(() => {
@@ -560,11 +570,12 @@ export function IncomeRank() {
                         </>
                       )}
                     </p>
-                    {oneInPeople !== null && (
+                    {oneInPeople !== null && peopleInGroup !== null && (
                       <p className="result-meaning">
                         {t('That means you are 1 in')}{' '}
                         <span className="mono">{oneInPeople.toLocaleString(i18n.language)}</span>{' '}
-                        {t('people.')}
+                        {t('people.')}{' '}
+                        {t('Out of 8 billion people, only')} <span className="mono">{peopleInGroup.toLocaleString(i18n.language)}</span> {t('are in this group.')}
                       </p>
                     )}
                   </div>

@@ -13,8 +13,8 @@ module.exports = {
     output: 'src/locales/$LOCALE.json',
     input: ['src/**/*.{ts,tsx}'],
     sort: true,
-    useKeysAsDefaultValue: true, // This is key for "Natural Language Keys"
+    useKeysAsDefaultValue: false, // 새 키 추가 시 빈 값으로 생성 (번역 누락 파악 용이)
     verbose: true,
     createOldCatalogs: false,
-    keepRemoved: true, // 기존 번역을 삭제하지 않음 (질문 번역 등 동적 키 보존)
+    keepRemoved: false, // 사용하지 않는 키 자동 제거
 };

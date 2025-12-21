@@ -1,3 +1,5 @@
+import type { TFunction } from 'i18next';
+
 export interface QuestionDetail {
   id: string;
   statisticIndicator: string;
@@ -9,7 +11,7 @@ export interface QuestionDetail {
   implication: string;
 }
 
-export const questionDetails: Record<string, QuestionDetail> = {
+export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail> => ({
   "Do you have access to electricity in your home?": {
     id: "Q1",
     statisticIndicator: "Access to Electricity",
@@ -17,8 +19,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "World Bank, IEA",
     dataSource: "World Bank Open Data - Access to Electricity (% of population)",
     year: "2024-2025",
-    details: "91.6% of the world population has access to electricity. About 666 million people still live without electricity. Sub-Saharan Africa has only ~53% access rate.",
-    implication: "The most fundamental infrastructure of modern civilization. Prerequisite for vaccine cold storage, phone charging, night-time studying, and all modern living.",
+    details: t("q1_details"),
+    implication: t("q1_implication"),
   },
   "Can you read and write simple sentences?": {
     id: "Q2",
@@ -27,8 +29,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "UNESCO Institute for Statistics (UIS)",
     dataSource: "UNESCO UIS Global Literacy Statistics",
     year: "2024-2025",
-    details: "Global adult literacy rate is ~88%. 739 million adults cannot perform basic reading/writing. About 2/3 of illiterate population are women.",
-    implication: "Essential prerequisite for information access, exercising legal rights, and economic participation. Foundation for internet use and higher education.",
+    details: t("q2_details"),
+    implication: t("q2_implication"),
   },
   "Do you have a bank account or mobile money account?": {
     id: "Q3",
@@ -37,8 +39,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "World Bank",
     dataSource: "Global Findex Database 2025",
     year: "2024-2025",
-    details: "79% of global adults have a bank or mobile money account. Increased dramatically from 51% in 2011. 40% of adults in low/middle-income countries saved via accounts in 2024.",
-    implication: "Enables saving, borrowing, and remittances. Critical safety net protecting households from economic shocks (illness, crop failure). 21% remain financially excluded.",
+    details: t("q3_details"),
+    implication: t("q3_implication"),
   },
   "Do you have access to a flush toilet or improved sanitation?": {
     id: "Q4",
@@ -47,8 +49,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "WHO/UNICEF",
     dataSource: "Joint Monitoring Programme (JMP) for Water Supply, Sanitation and Hygiene 2025",
     year: "2024-2025",
-    details: "~78-80% of world population uses basic sanitation facilities. Only 57% have 'safely managed' services. ~2.8 billion lack safe sanitation; ~1.7 billion use unsanitary shared toilets or open defecation.",
-    implication: "Prevents waterborne diseases and infant mortality. A measure of basic human dignity.",
+    details: t("q4_details"),
+    implication: t("q4_implication"),
   },
   "Do you have a refrigerator in your home?": {
     id: "Q5",
@@ -57,8 +59,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "Precedence Research, IEA, Our World in Data",
     dataSource: "Household Refrigerators And Freezers Market Report 2025-2034; IEA The Future of Cooling",
     year: "2024-2025",
-    details: "Global household refrigerator penetration ~78%. 2025 market size $101.8 billion. China 88%+, India 25-30%, North America/Western Europe near 100%.",
-    implication: "Climate-independent universal indicator (alternative to AC). Validates food security, cold chain access, and nutrition preservation. Tests both power infrastructure and household purchasing power.",
+    details: t("q5_details"),
+    implication: t("q5_implication"),
   },
   "Do you live without fear of eviction?": {
     id: "Q6",
@@ -67,8 +69,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "Prindex",
     dataSource: "Prindex Global Survey 2024-2025",
     year: "2024-2025",
-    details: "23% of global adults (~1.1 billion) fear forced eviction. Includes slum dwellers in developing countries and tenants facing gentrification in developed nations.",
-    implication: "Ability to plan for long-term future and invest in community. Measure of psychological security.",
+    details: t("q6_details"),
+    implication: t("q6_implication"),
   },
   "Do you use the internet?": {
     id: "Q7",
@@ -77,8 +79,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "ITU (International Telecommunication Union)",
     dataSource: "ITU Facts and Figures 2025",
     year: "2024-2025",
-    details: "74% of world population (~6 billion) uses the internet. 2.6 billion remain offline, primarily rural women in low-income countries.",
-    implication: "Determines access to information, education opportunities, and digital economy participation. Core indicator of digital citizenship.",
+    details: t("q7_details"),
+    implication: t("q7_implication"),
   },
   "Do you have access to safe drinking water at home?": {
     id: "Q8",
@@ -87,8 +89,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "WHO/UNICEF",
     dataSource: "Joint Monitoring Programme (JMP) 2025",
     year: "2024-2025",
-    details: "Only 74% have access to safely managed drinking water services (located on premises, available when needed, free from contamination). 26% travel long distances or drink contaminated water.",
-    implication: "Water fetching labor falls disproportionately on women/girls, depriving educational opportunities. Indicator of liberation from time poverty.",
+    details: t("q8_details"),
+    implication: t("q8_implication"),
   },
   "Do you live in a non-overcrowded home?": {
     id: "Q9",
@@ -97,8 +99,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "OECD, UN Habitat, Eurostat",
     dataSource: "OECD Better Life Index - Housing; Eurostat Living Conditions Statistics 2024",
     year: "2024-2025",
-    details: "In EU, non-EU citizens have 33% overcrowding rate (2.5x native rate of 13.7%). US adults 51% have at least one 'unused bedroom' (31.9 million surplus bedrooms, historic high). Estimated 70% global non-overcrowded rate considering slum populations.",
-    implication: "Overcrowding leads to disease spread, mental health decline, and impaired child development. Children with private bedrooms sleep 28 minutes more per night. Measure of privacy and dignity.",
+    details: t("q9_details"),
+    implication: t("q9_implication"),
   },
   "Can you afford a healthy diet?": {
     id: "Q10",
@@ -107,8 +109,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "FAO, IFAD, UNICEF, WFP, WHO",
     dataSource: "The State of Food Security and Nutrition in the World (SOFI) 2024",
     year: "2024",
-    details: "As of 2024, ~2.6 billion people (32% of world population) cannot afford a 'Healthy Diet'. Quality nutrition faces high economic barriers beyond mere calorie intake.",
-    implication: "Core indicator of nutritional inequality. Combined with lack of refrigerator, exacerbates nutritional imbalance.",
+    details: t("q10_details"),
+    implication: t("q10_implication"),
   },
   "Do you own a personal smartphone?": {
     id: "Q11",
@@ -117,8 +119,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "Statista, GSMA, Pew Research Center",
     dataSource: "Statista Digital Market Outlook 2024-2025; GSMA The Mobile Economy 2024",
     year: "2024-2025",
-    details: "~4.88 billion smartphone users worldwide (~60% of population). US adult ownership 91%. China ~1 billion users. 90%+ in developed countries; middle-class symbol in developing nations.",
-    implication: "Significant information gap between feature phones and smartphones. As a 'PC in your pocket', enables banking, remote learning, and government services access.",
+    details: t("q11_details"),
+    implication: t("q11_implication"),
   },
   "Did you graduate from high school (secondary education)?": {
     id: "Q12",
@@ -127,8 +129,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "UNESCO Institute for Statistics (UIS)",
     dataSource: "UNESCO UIS Education Statistics 2025",
     year: "2024-2025",
-    details: "Global upper secondary (high school) completion rate ~59%. While primary completion is 88%, dropout rates increase sharply at higher levels.",
-    implication: "Minimum qualification for formal jobs in modern labor market. ~40% of world population remains in low-skilled labor market.",
+    details: t("q12_details"),
+    implication: t("q12_implication"),
   },
   "Can you access essential healthcare without financial hardship?": {
     id: "Q13",
@@ -137,8 +139,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "WHO, World Bank",
     dataSource: "UHC Global Monitoring Report 2025",
     year: "2024-2025",
-    details: "4.6 billion people (over half the world) lack essential health services. ~2 billion experience financial hardship from healthcare costs. Combined service access and financial protection indices estimate 50-55%.",
-    implication: "A life where illness doesn't lead directly to poverty. Core component of social safety net.",
+    details: t("q13_details"),
+    implication: t("q13_implication"),
   },
   "Do you have social protection benefits (paid leave/sick leave)?": {
     id: "Q14",
@@ -147,8 +149,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "ILO (International Labour Organization)",
     dataSource: "ILO World Social Protection Report 2024-2026",
     year: "2024",
-    details: "For the first time in history, 52.4% of world population has at least one social protection benefit (pension, unemployment, parental leave, etc.) in 2024. However, 3.8 billion remain exposed to climate/economic crises without safety net. 91.3% of climate-vulnerable populations lack social protection. US is the only developed country with 0 days legally mandated paid leave.",
-    implication: "Protection from economic shocks and illness. The 'right to rest' represents the pinnacle of quality of life.",
+    details: t("q14_details"),
+    implication: t("q14_implication"),
   },
   "Do you spend more than $12 (approx. 16,000 KRW) per day?": {
     id: "Q15",
@@ -157,8 +159,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "World Data Lab",
     dataSource: "World Data Lab Global Consumer Class Analysis 2024-2025",
     year: "2024-2025",
-    details: "The 'consumer class' spending $12+/day (2017 PPP) exceeded 4 billion in 2024-2025, surpassing 50% of world population. This group has spending capacity for leisure, appliances, and dining out beyond basic necessities.",
-    implication: "The clearest economic benchmark for belonging to the world's 'purchasing power half'.",
+    details: t("q15_details"),
+    implication: t("q15_implication"),
   },
   "Do you receive preventive dental care at least once a year?": {
     id: "Q16",
@@ -167,8 +169,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "WHO, OECD, Gallup",
     dataSource: "WHO Global Oral Health Status Report 2022; OECD Health Statistics 2024; Gallup Health and Healthcare Survey 2024",
     year: "2024-2025",
-    details: "~45% (~3.5 billion) have oral diseases. Untreated cavities are humanity's most common disease. Netherlands averages 3.4 visits/year, Japan/Korea 1.7-3.1. US ages 18-64 annual dental visit rate 62.7% (down from 65.5% in 2019). Only 35% of low-income country adults can access basic oral health services. Regular dental visitors are 42% likely to rate health 'very good' (vs 26% for non-visitors).",
-    implication: "Highly income-elastic service. Tests investment capacity in body maintenance after survival needs are met. Tooth loss leads to social stigma and limited employment opportunities.",
+    details: t("q16_details"),
+    implication: t("q16_implication"),
   },
   "Does your household own a car?": {
     id: "Q17",
@@ -177,8 +179,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "OICA, World Bank, US Census Bureau",
     dataSource: "OICA World Vehicles in Use Statistics; US Census Bureau American Community Survey 2024",
     year: "2024-2025",
-    details: "Personal car ownership ~18% globally, ~45% at household level. US household ownership 91.7%, 779 per 1,000 population. India 7.5%, China 23%.",
-    implication: "Symbol of mobility freedom without public transit constraints plus economic capacity for maintenance/fuel. Iconic symbol of global middle class.",
+    details: t("q17_details"),
+    implication: t("q17_implication"),
   },
   "Do you have a washing machine at home?": {
     id: "Q18",
@@ -187,8 +189,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "Whirlpool Foundation, The Washing Machine Project, Euromonitor",
     dataSource: "The Washing Machine Project Impact Data 2024-2025; Technavio Residential Washing Machine Market Report 2024-2028",
     year: "2024-2025",
-    details: "~60% of world population (~5 billion) still relies on hand washing. US 80%, Germany 96.4%, China 94% ownership. India ~13%. Residential washing machine market projected to grow $49.4 billion 2024-2028.",
-    implication: "Hans Rosling's 'magic machine'. Liberates 10-20 hours of weekly domestic labor. Decisive indicator for women's labor liberation and 'time poverty' measurement.",
+    details: t("q18_details"),
+    implication: t("q18_implication"),
   },
   "Do you eat out or order food delivery at least once a week?": {
     id: "Q19",
@@ -197,8 +199,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "World Data Lab (estimated)",
     dataSource: "Global Consumer Class data-based estimation",
     year: "2024-2025",
-    details: "1% of world population uses McDonald's daily. Estimated 35% of global consumer class (top 50%) can dine out regularly. This represents the segment that can spend on 'experience' and 'convenience' for food.",
-    implication: "Indicates low Engel coefficient. Capacity for leisure consumption after meeting basic necessities.",
+    details: t("q19_details"),
+    implication: t("q19_implication"),
   },
   "Do you have home broadband internet?": {
     id: "Q20",
@@ -207,8 +209,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "ITU, Pew Research Center",
     dataSource: "ITU ICT Statistics 2024; Pew Research Center Internet/Broadband Fact Sheet 2024",
     year: "2024-2025",
-    details: "5.8 billion are online, but 'smartphone-only' households (relying solely on mobile data without home broadband) concentrate in low-income/minority groups. Fixed broadband penetration ~30% globally. Developed countries 70-90%, least developed <10%.",
-    implication: "Quality of connection beyond mere access. Freedom of information production/consumption without data plan restrictions.",
+    details: t("q20_details"),
+    implication: t("q20_implication"),
   },
   "Do you have a university degree (Bachelor's or higher)?": {
     id: "Q21",
@@ -217,8 +219,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "UNESCO Institute for Statistics (UIS), OECD, Our World in Data",
     dataSource: "UNESCO UIS Education Statistics; OECD Education at a Glance 2024",
     year: "2024-2025",
-    details: "OECD countries have 40-50% tertiary degree holders. Among global adults 25+, ~25% have completed higher education (including vocational/university programs).",
-    implication: "Entry ticket to high-income positions in knowledge-based economy. Top quarter of world's intellectual capital.",
+    details: t("q21_details"),
+    implication: t("q21_implication"),
   },
   "Do you have a valid passport?": {
     id: "Q22",
@@ -227,8 +229,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "US State Department, various government statistics",
     dataSource: "US State Department Passport Statistics; Forbes Travel Guide Analysis 2024",
     year: "2024-2025",
-    details: "US passport ownership rose from 5% in 1990 to ~48% in 2024. Japan ~17%. Considering low ownership in populous countries like China and India, estimated ~25% of world population holds a valid passport.",
-    implication: "Symbol of legal status and economic ability to cross borders at will. Physical proof of global citizenship.",
+    details: t("q22_details"),
+    implication: t("q22_implication"),
   },
   "Have you ever flown on an airplane?": {
     id: "Q23",
@@ -237,8 +239,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "Boeing, IATA, aviation industry analysis",
     dataSource: "Boeing Commercial Market Outlook; IATA World Air Transport Statistics",
     year: "2024-2025",
-    details: "9.5 billion annual passengers, but this results from repeated travel by a small group of 'super travelers'. ~80% of world population has never flown in their lifetime. Only 2-4% of total population travels internationally each year.",
-    implication: "Flight experience alone places you in the top 20% of global mobility. Air travel remains almost exclusively for the elite.",
+    details: t("q23_details"),
+    implication: t("q23_implication"),
   },
   "Do you use 5G internet?": {
     id: "Q24",
@@ -247,8 +249,8 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "ITU, GSMA",
     dataSource: "ITU Facts and Figures 2025; GSMA The Mobile Economy 2024",
     year: "2024-2025",
-    details: "55% of world population lives within 5G coverage. However, actual 5G plan subscribers with compatible devices are far fewer. 84% of high-income country populations have 5G coverage, while only 4% in low-income countries. Actual 5G users represent the top 20% technology-leading group.",
-    implication: "Cutting-edge technology access for 'quality internet benefits'. The frontier of the digital divide.",
+    details: t("q24_details"),
+    implication: t("q24_implication"),
   },
   "Do you subscribe to a paid streaming service (Netflix, etc.)?": {
     id: "Q25",
@@ -257,7 +259,7 @@ export const questionDetails: Record<string, QuestionDetail> = {
     source: "Netflix, Statista, MPA (Motion Picture Association)",
     dataSource: "Netflix Q4 2024 Earnings Report; Statista Video Streaming Statistics; MPA THEME Report 2024",
     year: "2024-2025",
-    details: "Netflix exceeded 300 million subscribers by end of 2024. Combined major platforms (Disney+, Amazon Prime Video, Spotify, etc.) with household deduplication estimates 1.0-1.2 billion people (12-15% of world population). Average US movie theater visits 1.4/year, 61% haven't visited in past year, showing entertainment center shifting to personal digital devices.",
-    implication: "Symbol of surplus income to invest in leisure after meeting basic necessities. Indicator of global spread of digital leisure culture.",
+    details: t("q25_details"),
+    implication: t("q25_implication"),
   },
-};
+});
