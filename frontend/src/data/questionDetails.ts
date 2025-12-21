@@ -278,15 +278,15 @@ export const getQuestionDetails = (t: TFunction): QuestionDetail[] => [
     implication: t("5G access means faster downloads, better streaming, and access to emerging technologies like AR/VR."),
   },
   {
-    question: t("Do you subscribe to a paid streaming service (Netflix, etc.)?"),
+    question: t("Do you regularly spend money on cultural activities (OTT subscriptions like Netflix, movie tickets, concerts, theater, or musicals)?"),
     id: "Q25",
-    statisticIndicator: "Paid Streaming Subscription",
+    statisticIndicator: "Paid Cultural Participation",
     percentage: 15.0,
-    source: "Netflix, Statista, MPA (Motion Picture Association)",
-    dataSource: "Netflix Q4 2024 Earnings Report; Statista Video Streaming Statistics; MPA THEME Report 2024",
+    source: "Estimated",
+    dataSource: "Composite estimate based on global consumer class and cultural participation data",
     year: "2024-2025",
-    details: t("Only about 1.2 billion people subscribe to paid streaming services worldwide."),
-    implication: t("Streaming subscriptions indicate discretionary spending on entertainment and reliable internet access."),
+    details: t("Only about 1.2 billion people regularly spend money on cultural activities such as streaming subscriptions, movies, concerts, theater, or musicals."),
+    implication: t("Regular cultural spending suggests discretionary income and access to diverse leisure opportunities."),
   },
 ];
 

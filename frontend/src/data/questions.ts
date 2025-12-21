@@ -76,7 +76,7 @@ export const questions: Question[] = [
     category: "Level 5: Mobility (Elite)",
   },
   {
-    id: "Do you subscribe to a paid streaming service (Netflix, etc.)?",
+    id: "Do you regularly spend money on cultural activities (OTT subscriptions like Netflix, movie tickets, concerts, theater, or musicals)?",
     probability: 0.150,
     category: "Level 5: Mobility (Elite)",
   },
