@@ -225,7 +225,7 @@ export const Result = ({ answers, sharedScore, onRestart }: ResultProps) => {
                             </div>
                             <div className="details-content">
                                 {questions.map((q, index) => {
-                                    const detail = questionDetails[q.id];
+                                    const detail = questionDetails.find(d => d.question === t(q.id));
                                     const userAnswer = answers[index];
                                     return (
                                         <div key={q.id} className="detail-item">

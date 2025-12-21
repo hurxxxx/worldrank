@@ -1,6 +1,7 @@
 import type { TFunction } from 'i18next';
 
 export interface QuestionDetail {
+  question: string;
   id: string;
   statisticIndicator: string;
   percentage: number;
@@ -11,8 +12,9 @@ export interface QuestionDetail {
   implication: string;
 }
 
-export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail> => ({
-  "Do you have access to electricity in your home?": {
+export const getQuestionDetails = (t: TFunction): QuestionDetail[] => [
+  {
+    question: t("Do you have access to electricity in your home?"),
     id: "Q1",
     statisticIndicator: "Access to Electricity",
     percentage: 91.6,
@@ -22,7 +24,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("About 675 million people worldwide still live without electricity, mostly in Sub-Saharan Africa and South Asia."),
     implication: t("Having electricity means you have access to lighting, refrigeration, and the ability to charge devices—a foundation for modern life."),
   },
-  "Can you read and write simple sentences?": {
+  {
+    question: t("Can you read and write simple sentences?"),
     id: "Q2",
     statisticIndicator: "Adult Literacy Rate",
     percentage: 88.0,
@@ -32,7 +35,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Approximately 770 million adults worldwide cannot read or write, with two-thirds being women."),
     implication: t("Literacy opens doors to employment, information access, and civic participation that many take for granted."),
   },
-  "Do you have a bank account or mobile money account?": {
+  {
+    question: t("Do you have a bank account or mobile money account?"),
     id: "Q3",
     statisticIndicator: "Account Ownership",
     percentage: 79.0,
@@ -42,7 +46,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("About 1.7 billion adults remain unbanked, lacking access to formal financial services."),
     implication: t("Financial inclusion enables saving, borrowing, and receiving payments safely—essential for economic stability."),
   },
-  "Do you have access to a flush toilet or improved sanitation?": {
+  {
+    question: t("Do you have access to a flush toilet or improved sanitation?"),
     id: "Q4",
     statisticIndicator: "Basic Sanitation Services",
     percentage: 78.0,
@@ -52,7 +57,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Around 1.7 billion people lack basic sanitation, and 494 million still practice open defecation."),
     implication: t("Proper sanitation prevents disease, protects dignity, and is fundamental to public health."),
   },
-  "Do you have a refrigerator in your home?": {
+  {
+    question: t("Do you have a refrigerator in your home?"),
     id: "Q5",
     statisticIndicator: "Household Refrigerator Ownership",
     percentage: 78.0,
@@ -62,7 +68,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Over 1.7 billion people lack access to refrigeration, affecting food safety and nutrition."),
     implication: t("Refrigeration allows food preservation, reduces waste, and enables a more varied and nutritious diet."),
   },
-  "Do you live without fear of eviction?": {
+  {
+    question: t("Do you live without fear of eviction?"),
     id: "Q6",
     statisticIndicator: "Secure Tenure Perception",
     percentage: 77.0,
@@ -72,7 +79,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Nearly 1 billion people worldwide feel insecure about their housing tenure."),
     implication: t("Housing security enables long-term planning, investment in property, and psychological well-being."),
   },
-  "Do you use the internet?": {
+  {
+    question: t("Do you use the internet?"),
     id: "Q7",
     statisticIndicator: "Internet Penetration Rate",
     percentage: 74.0,
@@ -82,7 +90,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("About 2.1 billion people have never used the internet, creating a significant digital divide."),
     implication: t("Internet access enables education, job opportunities, social connection, and access to vital information."),
   },
-  "Do you have access to safe drinking water at home?": {
+  {
+    question: t("Do you have access to safe drinking water at home?"),
     id: "Q8",
     statisticIndicator: "Safely Managed Drinking Water",
     percentage: 74.0,
@@ -92,7 +101,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Around 2.1 billion people lack safely managed drinking water services at home."),
     implication: t("Safe water access prevents waterborne diseases and saves hours spent collecting water daily."),
   },
-  "Do you live in a non-overcrowded home?": {
+  {
+    question: t("Do you live in a non-overcrowded home?"),
     id: "Q9",
     statisticIndicator: "Housing Density - Non-overcrowded",
     percentage: 70.0,
@@ -102,7 +112,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("About 2.4 billion people live in overcrowded housing conditions globally."),
     implication: t("Adequate living space supports privacy, study, work from home, and overall mental health."),
   },
-  "Can you afford a healthy diet?": {
+  {
+    question: t("Can you afford a healthy diet?"),
     id: "Q10",
     statisticIndicator: "Affordable Healthy Diet",
     percentage: 68.0,
@@ -112,7 +123,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Over 2.5 billion people cannot afford a healthy diet, contributing to malnutrition and diet-related diseases."),
     implication: t("Affording nutritious food is essential for physical health, cognitive development, and productivity."),
   },
-  "Do you own a personal smartphone?": {
+  {
+    question: t("Do you own a personal smartphone?"),
     id: "Q11",
     statisticIndicator: "Smartphone Ownership",
     percentage: 60.0,
@@ -122,7 +134,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("About 3.2 billion people do not own a smartphone, limiting their access to mobile services."),
     implication: t("Smartphone ownership provides access to apps, mobile banking, navigation, and instant communication."),
   },
-  "Did you graduate from high school (secondary education)?": {
+  {
+    question: t("Did you graduate from high school (secondary education)?"),
     id: "Q12",
     statisticIndicator: "Upper Secondary Completion Rate",
     percentage: 59.0,
@@ -132,7 +145,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Over 3.3 billion adults have not completed secondary education worldwide."),
     implication: t("Secondary education significantly improves employment prospects and earning potential."),
   },
-  "Can you access essential healthcare without financial hardship?": {
+  {
+    question: t("Can you access essential healthcare without financial hardship?"),
     id: "Q13",
     statisticIndicator: "Universal Health Coverage & Financial Protection",
     percentage: 55.0,
@@ -142,7 +156,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("About 3.6 billion people lack access to essential health services or face financial hardship when seeking care."),
     implication: t("Healthcare access without financial burden means illness doesn't lead to poverty."),
   },
-  "Do you have social protection benefits (paid leave/sick leave)?": {
+  {
+    question: t("Do you have social protection benefits (paid leave/sick leave)?"),
     id: "Q14",
     statisticIndicator: "Social Protection Coverage",
     percentage: 52.4,
@@ -152,7 +167,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Nearly 3.8 billion people lack any form of social protection coverage."),
     implication: t("Social protection provides a safety net during illness, unemployment, or retirement."),
   },
-  "Do you spend more than $12 (approx. 16,000 KRW) per day?": {
+  {
+    question: t("Do you spend more than $12 (approx. 16,000 KRW) per day?"),
     id: "Q15",
     statisticIndicator: "Global Consumer Class",
     percentage: 50.0,
@@ -162,7 +178,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Half of humanity lives on less than $12 per day, limiting their consumer choices."),
     implication: t("Being in the consumer class means having discretionary income beyond basic necessities."),
   },
-  "Do you receive preventive dental care at least once a year?": {
+  {
+    question: t("Do you receive preventive dental care at least once a year?"),
     id: "Q16",
     statisticIndicator: "Access to Preventive Dental Care",
     percentage: 45.0,
@@ -172,7 +189,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Over 4.4 billion people lack access to regular preventive dental care."),
     implication: t("Dental care access indicates broader healthcare availability and preventive health practices."),
   },
-  "Does your household own a car?": {
+  {
+    question: t("Does your household own a car?"),
     id: "Q17",
     statisticIndicator: "Household Car Access",
     percentage: 45.0,
@@ -182,7 +200,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Less than half of the world's households have access to a personal vehicle."),
     implication: t("Car ownership provides mobility, flexibility, and access to opportunities beyond public transit routes."),
   },
-  "Do you have a washing machine at home?": {
+  {
+    question: t("Do you have a washing machine at home?"),
     id: "Q18",
     statisticIndicator: "Washing Machine Ownership",
     percentage: 40.0,
@@ -192,7 +211,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("About 4.8 billion people wash clothes by hand, spending hours weekly on this task."),
     implication: t("A washing machine saves significant time, especially for women who traditionally handle laundry."),
   },
-  "Do you eat out or order food delivery at least once a week?": {
+  {
+    question: t("Do you eat out or order food delivery at least once a week?"),
     id: "Q19",
     statisticIndicator: "Discretionary Dining",
     percentage: 35.0,
@@ -202,7 +222,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Only about one-third of people can regularly afford to eat outside the home."),
     implication: t("Regular dining out indicates disposable income and access to diverse food options."),
   },
-  "Do you have home broadband internet?": {
+  {
+    question: t("Do you have home broadband internet?"),
     id: "Q20",
     statisticIndicator: "Home Broadband Access",
     percentage: 30.0,
@@ -212,7 +233,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("About 5.6 billion people lack fixed broadband internet access at home."),
     implication: t("Home broadband enables remote work, streaming, video calls, and seamless online experiences."),
   },
-  "Do you have a university degree (Bachelor's or higher)?": {
+  {
+    question: t("Do you have a university degree (Bachelor's or higher)?"),
     id: "Q21",
     statisticIndicator: "Tertiary Education Attainment",
     percentage: 25.0,
@@ -222,7 +244,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Only 1 in 4 adults worldwide has completed tertiary education."),
     implication: t("A university degree often provides access to higher-paying jobs and professional networks."),
   },
-  "Do you have a valid passport?": {
+  {
+    question: t("Do you have a valid passport?"),
     id: "Q22",
     statisticIndicator: "Passport Ownership",
     percentage: 25.0,
@@ -232,7 +255,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("About 6 billion people do not hold a valid passport, limiting international travel."),
     implication: t("Passport ownership represents the freedom and means to travel internationally."),
   },
-  "Have you ever flown on an airplane?": {
+  {
+    question: t("Have you ever flown on an airplane?"),
     id: "Q23",
     statisticIndicator: "Air Travel Experience",
     percentage: 20.0,
@@ -242,7 +266,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Only about 1.6 billion people have ever flown on an airplane in their lifetime."),
     implication: t("Air travel experience indicates access to long-distance mobility and often international exposure."),
   },
-  "Do you use 5G internet?": {
+  {
+    question: t("Do you use 5G internet?"),
     id: "Q24",
     statisticIndicator: "Advanced Connectivity",
     percentage: 20.0,
@@ -252,7 +277,8 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("5G coverage remains limited, with only about 1.6 billion people having access to this technology."),
     implication: t("5G access means faster downloads, better streaming, and access to emerging technologies like AR/VR."),
   },
-  "Do you subscribe to a paid streaming service (Netflix, etc.)?": {
+  {
+    question: t("Do you subscribe to a paid streaming service (Netflix, etc.)?"),
     id: "Q25",
     statisticIndicator: "Paid Streaming Subscription",
     percentage: 15.0,
@@ -262,4 +288,13 @@ export const getQuestionDetails = (t: TFunction): Record<string, QuestionDetail>
     details: t("Only about 1.2 billion people subscribe to paid streaming services worldwide."),
     implication: t("Streaming subscriptions indicate discretionary spending on entertainment and reliable internet access."),
   },
-});
+];
+
+// Category 키도 i18next-parser가 감지할 수 있도록 명시
+export const getCategoryKeys = (t: TFunction): string[] => [
+  t("Level 1: Infrastructure (Survival)"),
+  t("Level 2: Connectivity (Information)"),
+  t("Level 3: Assets (Comfort)"),
+  t("Level 4: Lifestyle (Prosperity)"),
+  t("Level 5: Mobility (Elite)"),
+];
