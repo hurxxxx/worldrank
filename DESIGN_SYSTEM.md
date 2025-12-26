@@ -218,6 +218,58 @@
 
 ---
 
+## Theme Support
+
+The design system supports both dark and light modes.
+
+### Theme Switching
+
+Theme can be set via:
+1. **System preference**: Automatically follows `prefers-color-scheme`
+2. **Manual toggle**: Set `data-theme="light"` or `data-theme="dark"` on `:root`
+
+```javascript
+// Toggle theme manually
+document.documentElement.setAttribute('data-theme', 'light');
+document.documentElement.setAttribute('data-theme', 'dark');
+
+// Follow system preference
+document.documentElement.removeAttribute('data-theme');
+```
+
+### Light Mode Colors
+
+| Name | Dark Mode | Light Mode |
+|------|-----------|------------|
+| Background | `#0a0908` | `#faf8f5` |
+| Surface | `#141210` | `#ffffff` |
+| Text Primary | `#f5f2ed` | `#1a1815` |
+| Text Secondary | `#9a958c` | `#5c584f` |
+| Primary | `#d4a574` | `#b88a52` |
+| Accent | `#c76d4e` | `#a44d32` |
+| Secondary | `#7a9e7e` | `#5a7d5e` |
+
+### Light Mode Glass/Cards
+
+```css
+/* Light mode */
+--glass-bg: rgba(255, 255, 255, 0.85);
+--glass-border: rgba(184, 138, 82, 0.15);
+--card-bg: rgba(255, 255, 255, 0.7);
+--card-bg-hover: rgba(255, 255, 255, 0.9);
+```
+
+### Light Mode Shadows
+
+```css
+/* Softer shadows for light mode */
+--shadow-sm: 0 2px 8px rgba(26, 24, 21, 0.08);
+--shadow-md: 0 4px 16px rgba(26, 24, 21, 0.12);
+--shadow-lg: 0 8px 32px rgba(26, 24, 21, 0.16);
+```
+
+---
+
 ## Design Principles
 
 1. **Warm Tones**: Use warm amber/gold primary colors instead of cold blues/cyans
@@ -226,6 +278,7 @@
 4. **Fluid Typography**: Font sizes scale smoothly across viewports
 5. **Accessible Contrast**: Maintain readable text contrast ratios
 6. **Touch-Friendly**: Minimum 44px touch targets for mobile
+7. **Theme Aware**: All colors adapt to light/dark mode automatically
 
 ---
 

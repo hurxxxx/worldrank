@@ -61,13 +61,13 @@
 }
 
 .header-brand:hover {
-    background: rgba(212, 165, 116, 0.08);
+    background: var(--decor-primary);
 }
 
 .brand-icon {
     color: var(--primary-color);
     font-size: 1.1rem;
-    text-shadow: 0 0 12px rgba(212, 165, 116, 0.4);
+    text-shadow: 0 0 12px var(--primary-glow);
 }
 
 .brand-text {
@@ -82,7 +82,7 @@
 .sidebar-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(10, 9, 8, 0.7);
+    background: var(--sidebar-overlay-bg, rgba(10, 9, 8, 0.7));
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     z-index: 500;
@@ -96,15 +96,12 @@
     bottom: 0;
     width: 280px;
     max-width: 85vw;
-    background: linear-gradient(180deg,
-        rgba(20, 18, 16, 0.98) 0%,
-        rgba(14, 13, 11, 0.99) 100%
-    );
+    background: var(--sidebar-bg);
     border-right: 1px solid var(--glass-border);
     z-index: 501;
     display: flex;
     flex-direction: column;
-    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--sidebar-shadow);
 }
 
 .sidebar-header {
@@ -127,7 +124,7 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    filter: drop-shadow(0 0 8px rgba(212, 165, 116, 0.3));
+    filter: drop-shadow(0 0 8px var(--border));
 }
 
 .sidebar-brand .brand-text {
@@ -201,8 +198,8 @@
 
 .sidebar-item.active {
     background: linear-gradient(135deg,
-        rgba(212, 165, 116, 0.12) 0%,
-        rgba(199, 109, 78, 0.08) 100%
+        var(--decor-primary) 0%,
+        var(--decor-accent) 100%
     );
     border-color: var(--glass-border);
 }
@@ -240,6 +237,12 @@
 .sidebar-footer {
     padding: 1rem 1.25rem 1.5rem;
     border-top: 1px solid var(--glass-border-subtle);
+}
+
+.sidebar-settings {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 /* Header Current App Display */
@@ -344,7 +347,7 @@
 
 .footer-github:hover {
     color: var(--primary-color);
-    filter: drop-shadow(0 0 8px rgba(212, 165, 116, 0.4));
+    filter: drop-shadow(0 0 8px var(--primary-glow));
 }
 
 /* Responsive */

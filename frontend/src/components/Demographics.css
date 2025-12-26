@@ -13,7 +13,7 @@
     font-size: clamp(1.5rem, 6vw, 2rem);
     font-weight: 700;
     margin: 0 0 0.5rem 0;
-    background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -54,7 +54,7 @@
     font-weight: 600;
     border-radius: 50px;
     border: 1px solid var(--glass-border);
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--glass-bg-light);
     color: var(--text-secondary);
     transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
@@ -62,15 +62,15 @@
 }
 
 .option-btn:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.15);
+    background: var(--glass-bg);
+    border-color: var(--border);
 }
 
 .option-btn.selected {
-    background: rgba(0, 240, 255, 0.15);
+    background: var(--decor-primary-strong);
     border-color: var(--primary-color);
     color: var(--primary-color);
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    box-shadow: var(--primary-glow);
 }
 
 .btn-continue {
@@ -80,12 +80,12 @@
     font-size: clamp(0.9rem, 3.5vw, 1.1rem);
     font-weight: 700;
     border-radius: 100px;
-    background: var(--primary-color);
-    color: #000;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: var(--bg-color);
     text-transform: uppercase;
     letter-spacing: 2px;
     transition: all 0.3s ease;
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    box-shadow: var(--shadow-md), var(--primary-glow);
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
 }

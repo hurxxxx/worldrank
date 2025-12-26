@@ -2,6 +2,8 @@
 
 :root {
   /* === Unified Design System 2025 === */
+  /* Default: Dark Mode */
+  --color-scheme: dark;
 
   /* Background - Deep charcoal with warm undertones */
   --bg-color: #0a0908;
@@ -53,6 +55,24 @@
   --card-bg-hover: rgba(26, 24, 21, 0.8);
   --border: rgba(212, 165, 116, 0.15);
   --border-subtle: rgba(245, 242, 237, 0.08);
+
+  /* Sidebar - Dark mode */
+  --sidebar-bg: linear-gradient(180deg, rgba(20, 18, 16, 0.98) 0%, rgba(14, 13, 11, 0.99) 100%);
+  --sidebar-shadow: 8px 0 32px rgba(0, 0, 0, 0.5);
+  --sidebar-overlay-bg: rgba(10, 9, 8, 0.7);
+
+  /* Decorative colors - for backgrounds, patterns, glows */
+  --decor-primary: rgba(212, 165, 116, 0.08);
+  --decor-primary-strong: rgba(212, 165, 116, 0.15);
+  --decor-primary-subtle: rgba(212, 165, 116, 0.02);
+  --decor-accent: rgba(199, 109, 78, 0.08);
+  --decor-accent-strong: rgba(199, 109, 78, 0.2);
+  --decor-secondary: rgba(122, 158, 126, 0.06);
+  --decor-secondary-strong: rgba(122, 158, 126, 0.15);
+
+  /* Theme toggle icon */
+  --theme-icon-sun: 0;
+  --theme-icon-moon: 1;
 
   /* Typography */
   --font-main: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -391,5 +411,213 @@ input, select, textarea {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================
+   LIGHT MODE
+   ============================================ */
+
+/* Light mode via data attribute (manual toggle) */
+[data-theme="light"] {
+  --color-scheme: light;
+
+  /* Background - Warm cream/paper tones */
+  --bg-color: #faf8f5;
+  --bg-gradient: linear-gradient(145deg, #faf8f5 0%, #f5f2ed 50%, #faf8f5 100%);
+  --surface-color: #ffffff;
+  --surface-elevated: #ffffff;
+
+  /* Text - Warm dark tones */
+  --text-primary: #1a1815;
+  --text-secondary: #5c584f;
+  --text-muted: #9a958c;
+
+  /* Primary - Much darker amber for light mode contrast */
+  --primary-color: #8b6914;
+  --primary-light: #a67c1a;
+  --primary-dark: #6d5210;
+  --primary-glow: 0 0 24px rgba(139, 105, 20, 0.25);
+
+  /* Accent - Deeper terracotta */
+  --accent-color: #8a3d26;
+  --accent-light: #a44d32;
+  --accent-dark: #6d2f1d;
+  --accent-glow: 0 0 20px rgba(138, 61, 38, 0.25);
+
+  /* Secondary - Deeper sage */
+  --secondary-color: #456349;
+  --secondary-light: #5a7d5e;
+  --secondary-dark: #354d38;
+
+  /* Semantic colors - adjusted for light mode */
+  --success-color: #456349;
+  --warning-color: #8b6914;
+  --error-color: #8a3d26;
+  --info-color: #3a5a75;
+
+  /* Glass morphism - light mode */
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --glass-bg-light: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(139, 105, 20, 0.2);
+  --glass-border-subtle: rgba(26, 24, 21, 0.1);
+
+  /* Cards - light mode */
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --card-bg-hover: rgba(255, 255, 255, 0.95);
+  --border: rgba(139, 105, 20, 0.25);
+  --border-subtle: rgba(26, 24, 21, 0.12);
+
+  /* Shadows - softer for light mode */
+  --shadow-sm: 0 2px 8px rgba(26, 24, 21, 0.1);
+  --shadow-md: 0 4px 16px rgba(26, 24, 21, 0.14);
+  --shadow-lg: 0 8px 32px rgba(26, 24, 21, 0.18);
+  --shadow-glow: 0 0 40px rgba(139, 105, 20, 0.15);
+
+  /* Sidebar - Light mode */
+  --sidebar-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 245, 0.99) 100%);
+  --sidebar-shadow: 8px 0 32px rgba(26, 24, 21, 0.15);
+  --sidebar-overlay-bg: rgba(26, 24, 21, 0.4);
+
+  /* Decorative colors - adjusted for light mode visibility */
+  --decor-primary: rgba(139, 105, 20, 0.1);
+  --decor-primary-strong: rgba(139, 105, 20, 0.18);
+  --decor-primary-subtle: rgba(139, 105, 20, 0.04);
+  --decor-accent: rgba(138, 61, 38, 0.1);
+  --decor-accent-strong: rgba(138, 61, 38, 0.22);
+  --decor-secondary: rgba(69, 99, 73, 0.08);
+  --decor-secondary-strong: rgba(69, 99, 73, 0.18);
+
+  /* Theme toggle icon */
+  --theme-icon-sun: 1;
+  --theme-icon-moon: 0;
+}
+
+/* System preference: light mode */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --color-scheme: light;
+
+    /* Background - Warm cream/paper tones */
+    --bg-color: #faf8f5;
+    --bg-gradient: linear-gradient(145deg, #faf8f5 0%, #f5f2ed 50%, #faf8f5 100%);
+    --surface-color: #ffffff;
+    --surface-elevated: #ffffff;
+
+    /* Text - Warm dark tones */
+    --text-primary: #1a1815;
+    --text-secondary: #5c584f;
+    --text-muted: #9a958c;
+
+    /* Primary - Much darker amber for light mode contrast */
+    --primary-color: #8b6914;
+    --primary-light: #a67c1a;
+    --primary-dark: #6d5210;
+    --primary-glow: 0 0 24px rgba(139, 105, 20, 0.25);
+
+    /* Accent - Deeper terracotta */
+    --accent-color: #8a3d26;
+    --accent-light: #a44d32;
+    --accent-dark: #6d2f1d;
+    --accent-glow: 0 0 20px rgba(138, 61, 38, 0.25);
+
+    /* Secondary - Deeper sage */
+    --secondary-color: #456349;
+    --secondary-light: #5a7d5e;
+    --secondary-dark: #354d38;
+
+    /* Semantic colors - adjusted for light mode */
+    --success-color: #456349;
+    --warning-color: #8b6914;
+    --error-color: #8a3d26;
+    --info-color: #3a5a75;
+
+    /* Glass morphism - light mode */
+    --glass-bg: rgba(255, 255, 255, 0.92);
+    --glass-bg-light: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(139, 105, 20, 0.2);
+    --glass-border-subtle: rgba(26, 24, 21, 0.1);
+
+    /* Cards - light mode */
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --card-bg-hover: rgba(255, 255, 255, 0.95);
+    --border: rgba(139, 105, 20, 0.25);
+    --border-subtle: rgba(26, 24, 21, 0.12);
+
+    /* Shadows - softer for light mode */
+    --shadow-sm: 0 2px 8px rgba(26, 24, 21, 0.1);
+    --shadow-md: 0 4px 16px rgba(26, 24, 21, 0.14);
+    --shadow-lg: 0 8px 32px rgba(26, 24, 21, 0.18);
+    --shadow-glow: 0 0 40px rgba(139, 105, 20, 0.15);
+
+    /* Sidebar - Light mode */
+    --sidebar-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 248, 245, 0.99) 100%);
+    --sidebar-shadow: 8px 0 32px rgba(26, 24, 21, 0.15);
+    --sidebar-overlay-bg: rgba(26, 24, 21, 0.4);
+
+    /* Decorative colors - adjusted for light mode visibility */
+    --decor-primary: rgba(139, 105, 20, 0.1);
+    --decor-primary-strong: rgba(139, 105, 20, 0.18);
+    --decor-primary-subtle: rgba(139, 105, 20, 0.04);
+    --decor-accent: rgba(138, 61, 38, 0.1);
+    --decor-accent-strong: rgba(138, 61, 38, 0.22);
+    --decor-secondary: rgba(69, 99, 73, 0.08);
+    --decor-secondary-strong: rgba(69, 99, 73, 0.18);
+
+    /* Theme toggle icon */
+    --theme-icon-sun: 1;
+    --theme-icon-moon: 0;
+  }
+}
+
+/* Light mode body background adjustments */
+[data-theme="light"] body::before,
+:root:not([data-theme="dark"]) body::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 105, 20, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(138, 61, 38, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 30% at 0% 80%, rgba(69, 99, 73, 0.04) 0%, transparent 50%),
+    var(--bg-gradient);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) body::before {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 105, 20, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 60% 40% at 100% 100%, rgba(138, 61, 38, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse 50% 30% at 0% 80%, rgba(69, 99, 73, 0.04) 0%, transparent 50%),
+      var(--bg-gradient);
+  }
+}
+
+/* Light mode selection */
+[data-theme="light"] ::selection {
+  background: rgba(139, 105, 20, 0.25);
+  color: var(--text-primary);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) ::selection {
+    background: rgba(139, 105, 20, 0.25);
+    color: var(--text-primary);
+  }
+}
+
+/* Light mode scrollbar */
+[data-theme="light"] ::-webkit-scrollbar-thumb {
+  background: rgba(26, 24, 21, 0.15);
+}
+
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(26, 24, 21, 0.25);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) ::-webkit-scrollbar-thumb {
+    background: rgba(26, 24, 21, 0.15);
+  }
+
+  :root:not([data-theme="dark"]) ::-webkit-scrollbar-thumb:hover {
+    background: rgba(26, 24, 21, 0.25);
   }
 }

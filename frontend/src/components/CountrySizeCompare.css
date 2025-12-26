@@ -27,8 +27,8 @@
     inset: 0;
     background-image: repeating-linear-gradient(
         0deg,
-        rgba(212, 165, 116, 0.02) 0,
-        rgba(212, 165, 116, 0.02) 1px,
+        var(--decor-primary-subtle) 0,
+        var(--decor-primary-subtle) 1px,
         transparent 1px,
         transparent 40px
     );
@@ -179,7 +179,7 @@
 
 .country-compare-message.error {
     color: var(--accent-color);
-    border-color: rgba(199, 109, 78, 0.3);
+    border-color: var(--border);
 }
 
 /* Stats Grid */
@@ -244,6 +244,7 @@
     font-family: var(--font-mono);
     font-size: var(--text-xl);
     font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
 }
 
 .stat-note {
@@ -277,8 +278,8 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 30% 30%, rgba(199, 109, 78, 0.08), transparent 55%),
-        radial-gradient(circle at 80% 60%, rgba(122, 158, 126, 0.06), transparent 50%);
+    background: radial-gradient(circle at 30% 30%, var(--decor-accent), transparent 55%),
+        radial-gradient(circle at 80% 60%, var(--decor-secondary), transparent 50%);
     opacity: 0.8;
     z-index: 0;
 }
@@ -360,7 +361,7 @@
 }
 
 .map-zoom-compact button:hover:not(:disabled) {
-    background: rgba(199, 109, 78, 0.2);
+    background: var(--decor-accent-strong);
 }
 
 .map-zoom-compact button:disabled {
@@ -392,7 +393,7 @@
     border-radius: 50%;
     background: var(--accent-color);
     border: 2px solid var(--bg-color);
-    box-shadow: 0 0 8px rgba(199, 109, 78, 0.45);
+    box-shadow: 0 0 8px var(--accent-glow);
     cursor: pointer;
 }
 
@@ -402,7 +403,7 @@
     border-radius: 50%;
     background: var(--accent-color);
     border: 2px solid var(--bg-color);
-    box-shadow: 0 0 8px rgba(199, 109, 78, 0.45);
+    box-shadow: 0 0 8px var(--accent-glow);
     cursor: pointer;
 }
 
@@ -566,7 +567,7 @@
     border-radius: 50%;
     background: var(--accent-color);
     border: 2px solid var(--bg-color);
-    box-shadow: 0 0 12px rgba(199, 109, 78, 0.45);
+    box-shadow: 0 0 12px var(--accent-glow);
 }
 
 .map-zoom input[type='range']::-moz-range-thumb {
@@ -575,7 +576,7 @@
     border-radius: 50%;
     background: var(--accent-color);
     border: 2px solid var(--bg-color);
-    box-shadow: 0 0 12px rgba(199, 109, 78, 0.45);
+    box-shadow: 0 0 12px var(--accent-glow);
 }
 
 .map-zoom input[type='range']::-moz-range-track {
@@ -655,12 +656,12 @@
     height: 10px;
     border-radius: 50%;
     background: var(--accent-color);
-    box-shadow: 0 0 12px rgba(199, 109, 78, 0.6);
+    box-shadow: 0 0 12px var(--accent-glow);
 }
 
 .legend-item.secondary .legend-dot {
     background: var(--secondary-color);
-    box-shadow: 0 0 12px rgba(122, 158, 126, 0.6);
+    box-shadow: 0 0 12px var(--secondary-color);
 }
 
 /* Map Stage */
@@ -686,15 +687,15 @@
     inset: 0;
     background-image: repeating-linear-gradient(
             0deg,
-            rgba(212, 165, 116, 0.04) 0,
-            rgba(212, 165, 116, 0.04) 1px,
+            var(--decor-primary-subtle) 0,
+            var(--decor-primary-subtle) 1px,
             transparent 1px,
             transparent 32px
         ),
         repeating-linear-gradient(
             90deg,
-            rgba(212, 165, 116, 0.04) 0,
-            rgba(212, 165, 116, 0.04) 1px,
+            var(--decor-primary-subtle) 0,
+            var(--decor-primary-subtle) 1px,
             transparent 1px,
             transparent 32px
         );
@@ -712,15 +713,14 @@
 }
 
 .map-path {
-    fill: rgba(199, 109, 78, 0.35);
+    fill: var(--decor-accent-strong);
     stroke: var(--accent-dark);
     stroke-width: 1.2;
     vector-effect: non-scaling-stroke;
-    mix-blend-mode: screen;
 }
 
 .map-path.secondary {
-    fill: rgba(122, 158, 126, 0.3);
+    fill: var(--decor-secondary-strong);
     stroke: var(--secondary-color);
 }
 
@@ -766,15 +766,15 @@ body.cc-fullscreen-lock {
     inset: 0;
     background-image: repeating-linear-gradient(
             0deg,
-            rgba(212, 165, 116, 0.02) 0,
-            rgba(212, 165, 116, 0.02) 1px,
+            var(--decor-primary-subtle) 0,
+            var(--decor-primary-subtle) 1px,
             transparent 1px,
             transparent 48px
         ),
         repeating-linear-gradient(
             90deg,
-            rgba(212, 165, 116, 0.02) 0,
-            rgba(212, 165, 116, 0.02) 1px,
+            var(--decor-primary-subtle) 0,
+            var(--decor-primary-subtle) 1px,
             transparent 1px,
             transparent 48px
         );
@@ -941,7 +941,7 @@ body.cc-fullscreen-lock {
 
 .fullscreen-zoom .zoom-button:hover:not(:disabled) {
     border-color: var(--accent-color);
-    background: rgba(199, 109, 78, 0.15);
+    background: var(--decor-accent-strong);
 }
 
 .fullscreen-zoom .zoom-button:disabled {
@@ -974,7 +974,7 @@ body.cc-fullscreen-lock {
     border-radius: 50%;
     background: var(--accent-color);
     border: 2px solid var(--bg-color);
-    box-shadow: 0 0 10px rgba(199, 109, 78, 0.5);
+    box-shadow: 0 0 10px var(--accent-glow);
     cursor: pointer;
 }
 
@@ -984,7 +984,7 @@ body.cc-fullscreen-lock {
     border-radius: 50%;
     background: var(--accent-color);
     border: 2px solid var(--bg-color);
-    box-shadow: 0 0 10px rgba(199, 109, 78, 0.5);
+    box-shadow: 0 0 10px var(--accent-glow);
     cursor: pointer;
 }
 
@@ -1062,13 +1062,13 @@ body.cc-fullscreen-lock {
 }
 
 .block-rect {
-    fill: rgba(199, 109, 78, 0.35);
+    fill: var(--decor-accent-strong);
     stroke: var(--accent-dark);
     stroke-width: 2;
 }
 
 .block-rect.secondary {
-    fill: rgba(122, 158, 126, 0.3);
+    fill: var(--decor-secondary-strong);
     stroke: var(--secondary-color);
 }
 
@@ -1135,13 +1135,13 @@ body.cc-fullscreen-lock {
 }
 
 .ranking-row.primary {
-    border-color: rgba(199, 109, 78, 0.5);
-    box-shadow: 0 0 20px rgba(199, 109, 78, 0.12);
+    border-color: var(--accent-glow);
+    box-shadow: 0 0 20px var(--decor-accent);
 }
 
 .ranking-row.secondary {
-    border-color: rgba(122, 158, 126, 0.5);
-    box-shadow: 0 0 20px rgba(122, 158, 126, 0.12);
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 20px var(--decor-secondary);
 }
 
 .ranking-index {

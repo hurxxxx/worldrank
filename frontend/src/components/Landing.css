@@ -73,7 +73,7 @@
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg), 0 0 30px rgba(212, 165, 116, 0.4);
+    box-shadow: var(--shadow-lg), 0 0 30px var(--primary-glow);
     background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
 }
 
@@ -81,7 +81,7 @@
     position: absolute;
     width: 320px;
     height: 320px;
-    background: radial-gradient(circle, rgba(212, 165, 116, 0.1) 0%, transparent 60%);
+    background: radial-gradient(circle, var(--decor-primary) 0%, transparent 60%);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -95,7 +95,7 @@
     position: absolute;
     width: 200px;
     height: 200px;
-    background: radial-gradient(circle, rgba(199, 109, 78, 0.06) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--decor-accent) 0%, transparent 70%);
     top: 20%;
     right: 10%;
     z-index: -1;

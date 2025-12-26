@@ -1,0 +1,117 @@
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.theme-toggle-track {
+    position: relative;
+    width: 48px;
+    height: 28px;
+    background: var(--glass-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+    transition: all var(--transition-fast);
+}
+
+.theme-toggle:hover .theme-toggle-track {
+    border-color: var(--border);
+    background: var(--glass-bg-light);
+}
+
+.theme-toggle-thumb {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+    left: 4px;
+}
+
+.theme-icon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+    transition: color var(--transition-fast);
+}
+
+.theme-icon.sun {
+    margin-right: auto;
+}
+
+.theme-icon.moon {
+    margin-left: auto;
+}
+
+.theme-icon.active {
+    color: var(--bg-color);
+}
+
+/* Compact version for header */
+.theme-toggle-compact {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-bg);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.theme-toggle-compact:hover {
+    background: var(--glass-bg-light);
+    border-color: var(--primary-color);
+}
+
+.theme-toggle-compact svg {
+    width: 18px;
+    height: 18px;
+    color: var(--text-secondary);
+    transition: color var(--transition-fast);
+}
+
+.theme-toggle-compact:hover svg {
+    color: var(--primary-color);
+}
+
+/* Mobile adjustments */
+@media (max-width: 480px) {
+    .theme-toggle-track {
+        width: 44px;
+        height: 26px;
+    }
+
+    .theme-toggle-thumb {
+        width: 18px;
+        height: 18px;
+    }
+
+    .theme-icon {
+        width: 18px;
+        height: 18px;
+    }
+
+    .theme-icon svg {
+        width: 12px;
+        height: 12px;
+    }
+}

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { ThemeToggle } from './ThemeToggle';
 import './Layout.css';
 
 interface LayoutProps {
@@ -14,12 +15,6 @@ interface LayoutProps {
     onSelectApp?: (appId: string) => void;
 }
 
-const APP_LIST = [
-    { id: 'world-rank', labelKey: 'World Rank Quiz', icon: '🌍', desc: 'Test your global awareness' },
-    { id: 'income-rank', labelKey: 'Living Standard Rank', icon: '💰', desc: 'Compare your income globally' },
-    { id: 'country-compare', labelKey: 'Country Size Compare', icon: '🗺️', desc: 'Compare country sizes' },
-    { id: 'global-stats', labelKey: 'Global Statistics', icon: '📊', desc: 'Explore world statistics' },
-];
 
 export const Layout = ({ children, showBack, showHome, onBack, onHome, currentApp, onSelectApp }: LayoutProps) => {
     const { t } = useTranslation();
@@ -112,22 +107,52 @@ export const Layout = ({ children, showBack, showHome, onBack, onHome, currentAp
                             </div>
                             <nav className="sidebar-nav">
                                 <div className="sidebar-section-title">{t('Apps')}</div>
-                                {APP_LIST.map((app) => (
-                                    <button
-                                        key={app.id}
-                                        className={`sidebar-item ${currentApp === app.id ? 'active' : ''}`}
-                                        onClick={() => handleAppSelect(app.id)}
-                                    >
-                                        <span className="sidebar-item-icon">{app.icon}</span>
-                                        <div className="sidebar-item-content">
-                                            <span className="sidebar-item-label">{t(app.labelKey)}</span>
-                                            <span className="sidebar-item-desc">{t(app.desc)}</span>
-                                        </div>
-                                    </button>
-                                ))}
+                                <button
+                                    className={`sidebar-item ${currentApp === 'world-rank' ? 'active' : ''}`}
+                                    onClick={() => handleAppSelect('world-rank')}
+                                >
+                                    <span className="sidebar-item-icon">🌍</span>
+                                    <div className="sidebar-item-content">
+                                        <span className="sidebar-item-label">{t('World Rank Quiz')}</span>
+                                        <span className="sidebar-item-desc">{t('Test your global awareness')}</span>
+                                    </div>
+                                </button>
+                                <button
+                                    className={`sidebar-item ${currentApp === 'income-rank' ? 'active' : ''}`}
+                                    onClick={() => handleAppSelect('income-rank')}
+                                >
+                                    <span className="sidebar-item-icon">💰</span>
+                                    <div className="sidebar-item-content">
+                                        <span className="sidebar-item-label">{t('Living Standard Rank')}</span>
+                                        <span className="sidebar-item-desc">{t('Compare your income globally')}</span>
+                                    </div>
+                                </button>
+                                <button
+                                    className={`sidebar-item ${currentApp === 'country-compare' ? 'active' : ''}`}
+                                    onClick={() => handleAppSelect('country-compare')}
+                                >
+                                    <span className="sidebar-item-icon">🗺️</span>
+                                    <div className="sidebar-item-content">
+                                        <span className="sidebar-item-label">{t('Country Size Compare')}</span>
+                                        <span className="sidebar-item-desc">{t('Compare country sizes')}</span>
+                                    </div>
+                                </button>
+                                <button
+                                    className={`sidebar-item ${currentApp === 'global-stats' ? 'active' : ''}`}
+                                    onClick={() => handleAppSelect('global-stats')}
+                                >
+                                    <span className="sidebar-item-icon">📊</span>
+                                    <div className="sidebar-item-content">
+                                        <span className="sidebar-item-label">{t('Global Statistics')}</span>
+                                        <span className="sidebar-item-desc">{t('Explore world statistics')}</span>
+                                    </div>
+                                </button>
                             </nav>
                             <div className="sidebar-footer">
-                                <LanguageSwitcher />
+                                <div className="sidebar-settings">
+                                    <ThemeToggle />
+                                    <LanguageSwitcher />
+                                </div>
                             </div>
                         </motion.aside>
                     </>
@@ -136,19 +161,7 @@ export const Layout = ({ children, showBack, showHome, onBack, onHome, currentAp
 
             <header className="layout-header">
                 <div className="header-left">
-                    {showBack && onBack ? (
-                        <motion.button
-                            className="header-btn"
-                            onClick={onBack}
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            aria-label={t('Back')}
-                        >
-                            ←
-                        </motion.button>
-                    ) : onSelectApp ? (
+                    {onSelectApp && (
                         <motion.button
                             className="header-btn header-btn-menu"
                             onClick={() => setSidebarOpen(true)}
@@ -162,7 +175,21 @@ export const Layout = ({ children, showBack, showHome, onBack, onHome, currentAp
                                 <line x1="3" y1="18" x2="21" y2="18" />
                             </svg>
                         </motion.button>
-                    ) : (
+                    )}
+                    {showBack && onBack && (
+                        <motion.button
+                            className="header-btn"
+                            onClick={onBack}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            aria-label={t('Back')}
+                        >
+                            ←
+                        </motion.button>
+                    )}
+                    {!onSelectApp && !showBack && (
                         <div className="header-brand">
                             <span className="brand-icon">✦</span>
                             <span className="brand-text">Awesome Rank</span>
@@ -170,14 +197,28 @@ export const Layout = ({ children, showBack, showHome, onBack, onHome, currentAp
                     )}
                 </div>
                 <div className="header-center">
-                    {currentApp && (
+                    {currentApp === 'world-rank' && (
                         <div className="header-current-app">
-                            <span className="current-app-icon">
-                                {APP_LIST.find(a => a.id === currentApp)?.icon}
-                            </span>
-                            <span className="current-app-name">
-                                {t(APP_LIST.find(a => a.id === currentApp)?.labelKey || '')}
-                            </span>
+                            <span className="current-app-icon">🌍</span>
+                            <span className="current-app-name">{t('World Rank Quiz')}</span>
+                        </div>
+                    )}
+                    {currentApp === 'income-rank' && (
+                        <div className="header-current-app">
+                            <span className="current-app-icon">💰</span>
+                            <span className="current-app-name">{t('Living Standard Rank')}</span>
+                        </div>
+                    )}
+                    {currentApp === 'country-compare' && (
+                        <div className="header-current-app">
+                            <span className="current-app-icon">🗺️</span>
+                            <span className="current-app-name">{t('Country Size Compare')}</span>
+                        </div>
+                    )}
+                    {currentApp === 'global-stats' && (
+                        <div className="header-current-app">
+                            <span className="current-app-icon">📊</span>
+                            <span className="current-app-name">{t('Global Statistics')}</span>
                         </div>
                     )}
                 </div>

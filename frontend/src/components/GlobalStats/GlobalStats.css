@@ -28,8 +28,8 @@
   inset: 0;
   background-image: repeating-linear-gradient(
     0deg,
-    rgba(212, 165, 116, 0.02) 0,
-    rgba(212, 165, 116, 0.02) 1px,
+    var(--decor-primary-subtle) 0,
+    var(--decor-primary-subtle) 1px,
     transparent 1px,
     transparent 40px
   );
@@ -78,8 +78,8 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 30% 30%, rgba(212, 165, 116, 0.08), transparent 55%),
-    radial-gradient(circle at 80% 60%, rgba(122, 158, 126, 0.06), transparent 50%);
+  background: radial-gradient(circle at 30% 30%, var(--decor-primary), transparent 55%),
+    radial-gradient(circle at 80% 60%, var(--decor-secondary), transparent 50%);
   opacity: 0.8;
   z-index: 0;
 }
@@ -128,7 +128,7 @@
 .form-select:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(212, 165, 116, 0.15);
+  box-shadow: 0 0 0 2px var(--decor-primary-strong);
 }
 
 .form-input::placeholder {
@@ -263,7 +263,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 20% 50%, rgba(212, 165, 116, 0.06), transparent 50%);
+  background: radial-gradient(circle at 20% 50%, var(--decor-primary), transparent 50%);
   opacity: 0.8;
   z-index: 0;
 }
@@ -370,15 +370,15 @@
 }
 
 .rarity-badge.rare {
-  background: rgba(212, 165, 116, 0.15);
+  background: var(--decor-primary-strong);
   color: var(--primary-color);
-  border: 1px solid rgba(212, 165, 116, 0.35);
+  border: 1px solid var(--border);
 }
 
 .rarity-badge.common {
-  background: rgba(122, 158, 126, 0.15);
+  background: var(--decor-secondary-strong);
   color: var(--secondary-color);
-  border: 1px solid rgba(122, 158, 126, 0.35);
+  border: 1px solid var(--border);
 }
 
 .card-description {
@@ -402,7 +402,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(212, 165, 116, 0.06), transparent 60%);
+  background: radial-gradient(circle at 50% 50%, var(--decor-primary), transparent 60%);
   opacity: 0.8;
   z-index: 0;
 }
@@ -461,7 +461,7 @@
 
 .action-btn.secondary:hover {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 1px rgba(212, 165, 116, 0.2);
+  box-shadow: 0 0 0 1px var(--decor-primary-strong);
 }
 
 /* Responsive */

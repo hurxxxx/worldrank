@@ -1,144 +1,280 @@
-.language-switcher {
-    position: relative;
+/* Language Trigger Button */
+.lang-trigger-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    min-height: 40px;
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.lang-trigger-btn:hover {
+    background: var(--glass-bg-light);
+    border-color: var(--border);
+}
+
+.lang-trigger-btn svg {
+    opacity: 0.8;
+}
+
+.lang-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+/* Modal Overlay */
+.lang-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--sidebar-overlay-bg);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     z-index: 1000;
 }
 
-.current-lang-btn {
+/* Modal Wrapper - for centering */
+.lang-modal-wrapper {
+    position: fixed;
+    inset: 0;
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(14, 14, 18, 0.8);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    color: var(--text-primary);
-    padding: 10px 16px;
-    min-height: var(--touch-target-min);
-    border-radius: 22px;
-    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
+    justify-content: center;
+    z-index: 1001;
+    padding: 1rem;
     box-sizing: border-box;
+    pointer-events: none;
 }
 
-.current-lang-btn:hover,
-.current-lang-btn.active {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-.arrow {
-    font-size: 0.7rem;
-    opacity: 0.7;
-    transition: transform 0.3s ease;
-}
-
-.arrow.open {
-    transform: rotate(180deg);
-}
-
-.lang-dropdown {
-    position: absolute;
-    top: 120%;
-    right: 0;
-    width: clamp(150px, 45vw, 180px);
-    max-height: min(300px, 60vh);
-    overflow-y: auto;
-    background: rgba(14, 14, 18, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+/* Modal Container */
+.lang-modal {
+    width: min(90vw, 400px);
+    max-height: 80vh;
+    background: var(--surface-color);
     border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 6px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+}
+
+/* Modal Header */
+.lang-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--glass-border-subtle);
+}
+
+.lang-modal-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+}
+
+.lang-modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.lang-modal-close:hover {
+    background: var(--card-bg);
+    border-color: var(--border);
+    color: var(--text-primary);
+}
+
+/* Modal Content */
+.lang-modal-content {
+    padding: 1rem 1.25rem 1.5rem;
+    overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
 
-/* Custom scrollbar for dropdown */
-.lang-dropdown::-webkit-scrollbar {
-    width: 4px;
+/* Language Grid */
+.lang-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.625rem;
 }
 
-.lang-dropdown::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-}
-
-.dropdown-item {
-    text-align: left;
-    padding: 12px 14px;
-    min-height: var(--touch-target-min);
-    color: var(--text-secondary);
-    font-size: clamp(0.85rem, 2.5vw, 0.9rem);
-    border-radius: 8px;
-    transition: all 0.2s ease;
+/* Language Option */
+.lang-option {
+    position: relative;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 1rem;
+    min-height: var(--touch-target-min);
+    background: var(--glass-bg-light);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
     -webkit-tap-highlight-color: transparent;
-    box-sizing: border-box;
+    text-align: left;
 }
 
-.dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.05);
+.lang-option:hover {
+    background: var(--card-bg-hover);
+    border-color: var(--border);
+}
+
+.lang-option.active {
+    background: var(--decor-primary-strong);
+    border-color: var(--primary-color);
+}
+
+.lang-option-label {
+    font-size: 0.95rem;
+    font-weight: var(--font-weight-semibold);
     color: var(--text-primary);
 }
 
-.dropdown-item.active {
-    background: rgba(0, 240, 255, 0.1);
+.lang-option-code {
+    font-size: 0.7rem;
+    font-weight: var(--font-weight-medium);
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+}
+
+.lang-option.active .lang-option-code {
     color: var(--primary-color);
 }
 
+.lang-check {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+}
+
+/* Scrollbar */
+.lang-modal-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.lang-modal-content::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+}
+
+/* Responsive */
 @media (max-width: 480px) {
-    .current-lang-btn {
-        padding: 8px 14px;
-        gap: 6px;
+    .lang-modal {
+        width: min(92vw, 360px);
     }
 
-    .lang-dropdown {
-        max-height: min(250px, 50vh);
+    .lang-modal-header {
+        padding: 1rem 1.25rem;
+    }
+
+    .lang-modal-content {
+        padding: 0.875rem 1rem 1.25rem;
+    }
+
+    .lang-grid {
+        gap: 0.5rem;
+    }
+
+    .lang-option {
+        padding: 0.875rem;
     }
 }
 
 @media (max-width: 375px) {
-    .current-lang-btn {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-        border-radius: 20px;
+    .lang-trigger-btn {
+        padding: 6px 10px;
+        min-height: 36px;
     }
 
-    .lang-dropdown {
-        width: clamp(140px, 50vw, 160px);
+    .lang-trigger-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .lang-label {
+        font-size: 0.75rem;
+    }
+
+    .lang-modal {
+        width: 94vw;
+        max-height: 85vh;
+    }
+
+    .lang-modal-title {
+        font-size: 1rem;
+    }
+
+    .lang-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .lang-option {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.75rem;
+        padding: 0.875rem 1rem;
+    }
+
+    .lang-option-label {
+        font-size: 0.9rem;
+    }
+
+    .lang-option-code {
+        font-size: 0.65rem;
+    }
+
+    .lang-check {
+        position: static;
+        margin-left: auto;
     }
 }
 
 @media (max-width: 320px) {
-    .current-lang-btn {
-        padding: 6px 10px;
-        font-size: 0.75rem;
+    .lang-trigger-btn {
+        padding: 5px 8px;
+        min-height: 34px;
         gap: 4px;
-        min-height: 40px;
     }
 
-    .arrow {
-        font-size: 0.6rem;
+    .lang-modal-header {
+        padding: 0.875rem 1rem;
     }
 
-    .lang-dropdown {
-        width: 140px;
-        max-height: min(200px, 45vh);
-        padding: 4px;
-    }
-
-    .dropdown-item {
-        padding: 10px 12px;
-        min-height: 40px;
+    .lang-modal-close {
+        width: 32px;
+        height: 32px;
         font-size: 0.8rem;
+    }
+
+    .lang-option {
+        padding: 0.75rem;
+        min-height: 44px;
     }
 }

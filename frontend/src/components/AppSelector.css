@@ -68,8 +68,8 @@
     position: absolute;
     inset: 0;
     background: linear-gradient(135deg,
-        rgba(212, 165, 116, 0.08) 0%,
-        rgba(199, 109, 78, 0.04) 50%,
+        var(--decor-primary) 0%,
+        var(--decor-accent) 50%,
         transparent 100%
     );
     opacity: 0;
@@ -106,7 +106,7 @@
     transform: translateY(-2px);
     box-shadow:
         0 8px 24px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(212, 165, 116, 0.1);
+        0 0 0 1px var(--decor-primary);
 }
 
 .app-card:active {

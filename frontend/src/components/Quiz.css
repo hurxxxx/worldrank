@@ -77,7 +77,7 @@
 }
 
 .btn-back:hover {
-    background: rgba(212, 165, 116, 0.1);
+    background: var(--decor-primary);
     border-color: var(--primary-color);
     color: var(--primary-color);
 }
@@ -123,11 +123,11 @@
 }
 
 .btn-option.yes {
-    border-color: rgba(212, 165, 116, 0.3);
+    border-color: var(--border);
 }
 
 .btn-option.yes.selected {
-    background: rgba(212, 165, 116, 0.15);
+    background: var(--decor-primary-strong);
     border-color: var(--primary-color);
 }
 
@@ -197,7 +197,7 @@
 /* Desktop hover effects */
 @media (hover: hover) and (pointer: fine) {
     .btn-option.yes:hover {
-        background: rgba(212, 165, 116, 0.15);
+        background: var(--decor-primary-strong);
         border-color: var(--primary-color);
     }
 

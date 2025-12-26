@@ -37,7 +37,7 @@
   color: var(--accent-color);
   white-space: nowrap;
   padding: 4px 8px;
-  background: rgba(199, 109, 78, 0.15);
+  background: var(--decor-accent-strong);
   border-radius: 4px;
 }
 
@@ -81,7 +81,7 @@
     #3b82f6 100%
   );
   border-radius: 6px;
-  box-shadow: 0 0 12px rgba(199, 109, 78, 0.4);
+  box-shadow: 0 0 12px var(--accent-glow);
 }
 
 .chart-bar-markers {
@@ -114,7 +114,7 @@
   border: 3px solid #fff;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: 0 2px 8px rgba(199, 109, 78, 0.5);
+  box-shadow: 0 2px 8px var(--accent-glow);
   z-index: 10;
 }
 

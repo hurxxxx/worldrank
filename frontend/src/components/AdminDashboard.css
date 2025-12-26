@@ -141,12 +141,12 @@
 }
 
 .stat-label {
-  color: #ccc;
+  color: var(--text-secondary);
 }
 
 .stat-value {
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 /* Responses Table */
