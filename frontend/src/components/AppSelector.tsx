@@ -32,6 +32,13 @@ export const AppSelector = ({ onSelectApp }: AppSelectorProps) => {
             icon: '🧾',
             available: true,
         },
+        {
+            id: 'country-compare',
+            title: t('True Size Atlas'),
+            description: t('Compare country sizes at real scale'),
+            icon: '🗺️',
+            available: true,
+        },
     ];
 
     const handleAppClick = (app: AppInfo) => {

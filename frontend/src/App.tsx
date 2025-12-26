@@ -8,6 +8,7 @@ import type { DemographicsData } from './components/Demographics';
 import { Quiz } from './components/Quiz';
 import { Result } from './components/Result';
 import { IncomeRank } from './components/IncomeRank';
+import { CountrySizeCompare } from './components/CountrySizeCompare';
 import { AdminDashboard } from './components/AdminDashboard';
 import { ConsentBanner } from './components/ConsentBanner';
 import { ConsentProvider } from './contexts/ConsentContext';
@@ -99,13 +100,15 @@ function getUrlState() {
   const income = params.get('income');
   const basis = params.get('basis');
 
-  let view: 'home' | 'landing' | 'demographics' | 'quiz' | 'result' | 'income' | 'admin' = 'home';
+  let view: 'home' | 'landing' | 'demographics' | 'quiz' | 'result' | 'income' | 'admin' | 'country-compare' = 'home';
 
   // Check for /admin path
   if (window.location.pathname === '/admin') {
     view = 'admin';
   } else if (app === 'income-rank') {
     view = 'income';
+  } else if (app === 'country-compare') {
+    view = 'country-compare';
   } else if (app === 'world-rank') {
     // If score is present, show result directly
     if (score) {
@@ -127,7 +130,7 @@ function AppContent() {
   const { i18n } = useTranslation();
   const { canCollectData } = useConsent();
   const urlState = getUrlState();
-  const [view, setView] = useState<'home' | 'landing' | 'demographics' | 'quiz' | 'result' | 'income' | 'admin'>(urlState.view);
+  const [view, setView] = useState<'home' | 'landing' | 'demographics' | 'quiz' | 'result' | 'income' | 'admin' | 'country-compare'>(urlState.view);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [demographics, setDemographics] = useState<DemographicsData | null>(null);
   const [sharedScore] = useState<number | undefined>(urlState.sharedScore);
@@ -144,6 +147,8 @@ function AppContent() {
       setView('landing');
     } else if (appId === 'income-rank') {
       setView('income');
+    } else if (appId === 'country-compare') {
+      setView('country-compare');
     }
   };
 
@@ -151,6 +156,7 @@ function AppContent() {
   const goBack = () => {
     if (view === 'landing') setView('home');
     else if (view === 'income') setView('home');
+    else if (view === 'country-compare') setView('home');
     else if (view === 'demographics') setView('landing');
     else if (view === 'quiz') setView('demographics');
     else if (view === 'result') setView('home');
@@ -249,6 +255,7 @@ function AppContent() {
         {view === 'home' && <AppSelector onSelectApp={handleSelectApp} key="home" />}
         {view === 'landing' && <Landing onStart={startQuiz} key="landing" />}
         {view === 'income' && <IncomeRank key="income" />}
+        {view === 'country-compare' && <CountrySizeCompare key="country-compare" />}
         {view === 'demographics' && <Demographics onComplete={handleDemographics} key="demographics" />}
         {view === 'quiz' && <Quiz onFinish={finishQuiz} key="quiz" />}
         {view === 'result' && <Result answers={answers} sharedScore={sharedScore} onRestart={restart} key="result" />}
