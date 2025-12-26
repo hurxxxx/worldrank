@@ -19,6 +19,13 @@ export const AppSelector = ({ onSelectApp }: AppSelectorProps) => {
 
     const apps: AppInfo[] = [
         {
+            id: 'country-compare',
+            title: t('True Size Atlas'),
+            description: t('Compare country sizes at real scale'),
+            icon: '🗺️',
+            available: true,
+        },
+        {
             id: 'world-rank',
             title: t('Awesome Rank'),
             description: t('Where do you rank among 8 billion people?'),
@@ -29,14 +36,7 @@ export const AppSelector = ({ onSelectApp }: AppSelectorProps) => {
             id: 'income-rank',
             title: t('Income Rank'),
             description: t('See your income rank worldwide'),
-            icon: '🧾',
-            available: true,
-        },
-        {
-            id: 'country-compare',
-            title: t('True Size Atlas'),
-            description: t('Compare country sizes at real scale'),
-            icon: '🗺️',
+            icon: '💰',
             available: true,
         },
     ];
@@ -62,7 +62,7 @@ export const AppSelector = ({ onSelectApp }: AppSelectorProps) => {
                 transition={{ delay: 0.2, duration: 0.6 }}
             >
                 <h1 className="app-selector-title">{t('Awesome Rank')}</h1>
-                <p className="app-selector-subtitle">{t('Discover where you stand')}</p>
+                <p className="app-selector-subtitle">{t('Explore the world through data')}</p>
             </motion.div>
 
             <motion.div
@@ -79,13 +79,15 @@ export const AppSelector = ({ onSelectApp }: AppSelectorProps) => {
                         initial={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ delay: 0.5 + index * 0.1, duration: 0.4 }}
-                        whileHover={app.available ? { scale: 1.03, y: -4 } : {}}
-                        whileTap={app.available ? { scale: 0.97 } : {}}
+                        whileHover={app.available ? { scale: 1.02, x: 4 } : {}}
+                        whileTap={app.available ? { scale: 0.98 } : {}}
                         disabled={!app.available}
                     >
                         <span className="app-card-icon">{app.icon}</span>
-                        <span className="app-card-title">{app.title}</span>
-                        <span className="app-card-description">{app.description}</span>
+                        <span className="app-card-content">
+                            <span className="app-card-title">{app.title}</span>
+                            <span className="app-card-description">{app.description}</span>
+                        </span>
                         {!app.available && (
                             <span className="app-card-badge">{t('Coming Soon')}</span>
                         )}
