@@ -113,8 +113,8 @@ export const Layout = ({ children, showBack, showHome, onBack, onHome, currentAp
                                 >
                                     <span className="sidebar-item-icon">🌍</span>
                                     <div className="sidebar-item-content">
-                                        <span className="sidebar-item-label">{t('World Rank Quiz')}</span>
-                                        <span className="sidebar-item-desc">{t('Test your global awareness')}</span>
+                                        <span className="sidebar-item-label">{t('World Rank')}</span>
+                                        <span className="sidebar-item-desc">{t('Discover your place in the world')}</span>
                                     </div>
                                 </button>
                                 <button
@@ -200,7 +200,7 @@ export const Layout = ({ children, showBack, showHome, onBack, onHome, currentAp
                     {currentApp === 'world-rank' && (
                         <div className="header-current-app">
                             <span className="current-app-icon">🌍</span>
-                            <span className="current-app-name">{t('World Rank Quiz')}</span>
+                            <span className="current-app-name">{t('World Rank')}</span>
                         </div>
                     )}
                     {currentApp === 'income-rank' && (
