@@ -775,7 +775,7 @@ export function IncomeRank() {
           <div className="income-rank-kicker">{t('New')}</div>
           <h1 className="income-rank-title">{t('Income Rank')}</h1>
           <p className="income-rank-subtitle">
-            {t('Enter your household take-home income to estimate where you stand globally.')}
+            {t('Enter your household pre-tax income to estimate where you stand globally.')}
           </p>
         </motion.div>
 
@@ -826,7 +826,7 @@ export function IncomeRank() {
 
           <div className="income-row">
             <label className="income-label" htmlFor="income-input">
-              {t('Household annual income (after tax)')} <span className="income-hint">{normalizedCurrency ? formatCurrencyWithSymbol(normalizedCurrency, i18n.language) : t('Local currency')}</span>
+              {t('Household annual income (pre-tax)')} <span className="income-hint">{normalizedCurrency ? formatCurrencyWithSymbol(normalizedCurrency, i18n.language) : t('Local currency')}</span>
             </label>
             <div className="income-input-group">
               <div className="income-input-wrap">
@@ -856,7 +856,7 @@ export function IncomeRank() {
                   value={localIncomeText}
                   onChange={(e) => setLocalIncomeText(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  aria-label={t('Household annual income (after tax)')}
+                  aria-label={t('Household annual income (pre-tax)')}
                 />
               </div>
               <button
@@ -868,7 +868,7 @@ export function IncomeRank() {
               </button>
             </div>
             <div className="income-helper">
-              {t('Enter your total household take-home income in your local currency, including wages and other income.')}
+              {t('Enter your total household pre-tax income in your local currency, including wages, business, capital, and transfers.')}
             </div>
           </div>
 
@@ -1089,7 +1089,7 @@ export function IncomeRank() {
                     )}
                     <p className="result-note">
                       {t('Global ranking uses adult pre-tax income (WID).')}{' '}
-                      {t('Your input is after-tax household income per person, so this is an estimate.')}{' '}
+                      {t('Your input is pre-tax household income per person, so this is an estimate.')}{' '}
                       {basis === 'MER'
                         ? t('MER results can change with exchange rates.')
                         : t('PPP reflects cost of living differences.')}
