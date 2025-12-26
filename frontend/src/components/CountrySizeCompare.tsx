@@ -83,6 +83,7 @@ export const CountrySizeCompare = () => {
     const [secondaryOffset, setSecondaryOffset] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [dragTarget, setDragTarget] = useState<'both' | 'primary' | 'secondary'>('both');
+    const [isFullscreen, setIsFullscreen] = useState(false);
     const [resolution, setResolution] = useState<'110m' | '10m'>('110m');
     const [showAllRanks, setShowAllRanks] = useState(false);
     const dragStateRef = useRef<{
@@ -97,6 +98,17 @@ export const CountrySizeCompare = () => {
         scaleX: number;
         scaleY: number;
         target: 'both' | 'primary' | 'secondary';
+    } | null>(null);
+    const pointerCacheRef = useRef(new Map<number, { x: number; y: number }>());
+    const pinchStateRef = useRef<{
+        distance: number;
+        zoom: number;
+        panX: number;
+        panY: number;
+        midX: number;
+        midY: number;
+        scaleX: number;
+        scaleY: number;
     } | null>(null);
 
     useEffect(() => {
@@ -180,10 +192,24 @@ export const CountrySizeCompare = () => {
     }, [autoZoom, primary, secondary]);
 
     useEffect(() => {
+        if (!isFullscreen) return;
+        document.body.classList.add('cc-fullscreen-lock');
+        if (window.screen?.orientation?.lock) {
+            window.screen.orientation.lock('landscape').catch(() => {});
+        }
+        return () => {
+            document.body.classList.remove('cc-fullscreen-lock');
+            window.screen?.orientation?.unlock?.();
+        };
+    }, [isFullscreen]);
+
+    useEffect(() => {
         setPan({ x: 0, y: 0 });
         setPrimaryOffset({ x: 0, y: 0 });
         setSecondaryOffset({ x: 0, y: 0 });
         dragStateRef.current = null;
+        pointerCacheRef.current.clear();
+        pinchStateRef.current = null;
         setIsDragging(false);
         setDragTarget('both');
     }, [primaryId, secondaryId, resolution]);
@@ -328,25 +354,69 @@ export const CountrySizeCompare = () => {
 
     const handlePointerDown = (event: ReactPointerEvent<SVGSVGElement>) => {
         const rect = event.currentTarget.getBoundingClientRect();
-        dragStateRef.current = {
-            startX: event.clientX,
-            startY: event.clientY,
-            originPanX: pan.x,
-            originPanY: pan.y,
-            originPrimaryX: primaryOffset.x,
-            originPrimaryY: primaryOffset.y,
-            originSecondaryX: secondaryOffset.x,
-            originSecondaryY: secondaryOffset.y,
-            scaleX: rect.width ? VIEWBOX_WIDTH / rect.width : 1,
-            scaleY: rect.height ? VIEWBOX_HEIGHT / rect.height : 1,
-            target: dragTarget,
-        };
+        pointerCacheRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        if (pointerCacheRef.current.size === 1) {
+            dragStateRef.current = {
+                startX: event.clientX,
+                startY: event.clientY,
+                originPanX: pan.x,
+                originPanY: pan.y,
+                originPrimaryX: primaryOffset.x,
+                originPrimaryY: primaryOffset.y,
+                originSecondaryX: secondaryOffset.x,
+                originSecondaryY: secondaryOffset.y,
+                scaleX: rect.width ? VIEWBOX_WIDTH / rect.width : 1,
+                scaleY: rect.height ? VIEWBOX_HEIGHT / rect.height : 1,
+                target: dragTarget,
+            };
+        } else if (pointerCacheRef.current.size === 2) {
+            const points = Array.from(pointerCacheRef.current.values());
+            const dx = points[0].x - points[1].x;
+            const dy = points[0].y - points[1].y;
+            const distance = Math.hypot(dx, dy);
+            const midX = (points[0].x + points[1].x) / 2;
+            const midY = (points[0].y + points[1].y) / 2;
+            pinchStateRef.current = {
+                distance,
+                zoom,
+                panX: pan.x,
+                panY: pan.y,
+                midX,
+                midY,
+                scaleX: rect.width ? VIEWBOX_WIDTH / rect.width : 1,
+                scaleY: rect.height ? VIEWBOX_HEIGHT / rect.height : 1,
+            };
+            dragStateRef.current = null;
+        }
         setIsDragging(true);
         event.currentTarget.setPointerCapture(event.pointerId);
     };
 
     const handlePointerMove = (event: ReactPointerEvent<SVGSVGElement>) => {
-        if (!dragStateRef.current || !overlay) return;
+        if (!overlay) return;
+        if (pointerCacheRef.current.has(event.pointerId)) {
+            pointerCacheRef.current.set(event.pointerId, { x: event.clientX, y: event.clientY });
+        }
+        if (pointerCacheRef.current.size === 2 && pinchStateRef.current) {
+            const points = Array.from(pointerCacheRef.current.values());
+            const dx = points[0].x - points[1].x;
+            const dy = points[0].y - points[1].y;
+            const distance = Math.hypot(dx, dy);
+            const midX = (points[0].x + points[1].x) / 2;
+            const midY = (points[0].y + points[1].y) / 2;
+            const ratio = pinchStateRef.current.distance ? distance / pinchStateRef.current.distance : 1;
+            const nextZoom = clamp(pinchStateRef.current.zoom * ratio, MIN_ZOOM, MAX_ZOOM);
+            setZoom(nextZoom);
+
+            const scaleX = pinchStateRef.current.scaleX || 1;
+            const scaleY = pinchStateRef.current.scaleY || 1;
+            const dxMid = (midX - pinchStateRef.current.midX) * scaleX;
+            const dyMid = (midY - pinchStateRef.current.midY) * scaleY;
+            setPan({ x: pinchStateRef.current.panX + dxMid, y: pinchStateRef.current.panY + dyMid });
+            return;
+        }
+
+        if (!dragStateRef.current) return;
         const {
             startX,
             startY,
@@ -436,9 +506,14 @@ export const CountrySizeCompare = () => {
     };
 
     const handlePointerEnd = (event: ReactPointerEvent<SVGSVGElement>) => {
-        if (!dragStateRef.current) return;
-        dragStateRef.current = null;
-        setIsDragging(false);
+        pointerCacheRef.current.delete(event.pointerId);
+        if (pointerCacheRef.current.size < 2) {
+            pinchStateRef.current = null;
+        }
+        if (pointerCacheRef.current.size === 0) {
+            dragStateRef.current = null;
+            setIsDragging(false);
+        }
         event.currentTarget.releasePointerCapture(event.pointerId);
     };
 
@@ -585,18 +660,200 @@ export const CountrySizeCompare = () => {
                         </div>
                     </div>
 
-                    <motion.div
-                        className="country-compare-map"
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ duration: 0.6 }}
-                    >
+                    {isFullscreen && (
+                        <div className="compare-fullscreen">
+                            <div className="fullscreen-header">
+                                <div className="fullscreen-title">{t('Overlay view')}</div>
+                                <button
+                                    type="button"
+                                    className="fullscreen-toggle"
+                                    onClick={() => setIsFullscreen(false)}
+                                >
+                                    {t('Exit full screen')}
+                                </button>
+                            </div>
+                            <div className="fullscreen-controls">
+                                <div className="country-compare-select">
+                                    <label htmlFor="country-primary-full">{t('Country A')}</label>
+                                    <select
+                                        id="country-primary-full"
+                                        value={primaryId}
+                                        onChange={(event) => setPrimaryId(event.target.value)}
+                                    >
+                                        <option value="" disabled>
+                                            {t('Select a country')}
+                                        </option>
+                                        {countries.map((country) => (
+                                            <option key={country.id} value={country.id}>
+                                                {country.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <button
+                                    className="country-compare-swap"
+                                    type="button"
+                                    onClick={handleSwap}
+                                    aria-label={t('Swap countries')}
+                                >
+                                    <span className="swap-icon">{'<>'}</span>
+                                    <span>{t('Swap')}</span>
+                                </button>
+                                <div className="country-compare-select">
+                                    <label htmlFor="country-secondary-full">{t('Country B')}</label>
+                                    <select
+                                        id="country-secondary-full"
+                                        value={secondaryId}
+                                        onChange={(event) => setSecondaryId(event.target.value)}
+                                    >
+                                        <option value="" disabled>
+                                            {t('Select a country')}
+                                        </option>
+                                        {countries.map((country) => (
+                                            <option key={country.id} value={country.id}>
+                                                {country.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="country-compare-map fullscreen">
+                                <div className="map-header">
+                                    <div className="map-title">
+                                        <h2>{t('Overlay view')}</h2>
+                                        <p>{t('Equal-area projection keeps the size ratio precise.')}</p>
+                                    </div>
+                                    <div className="map-tools">
+                                        <div className="map-legend">
+                                            <span className="legend-item primary">
+                                                <span className="legend-dot" />
+                                                {primary.label}
+                                            </span>
+                                            <span className="legend-item secondary">
+                                                <span className="legend-dot" />
+                                                {secondary.label}
+                                            </span>
+                                        </div>
+                                        <div className="map-controls">
+                                            <label htmlFor="overlay-zoom-full">{t('Zoom')}</label>
+                                            <div className="map-zoom">
+                                                <button
+                                                    type="button"
+                                                    className="zoom-button"
+                                                    onClick={() => handleZoomChange(zoom - ZOOM_STEP)}
+                                                    aria-label={t('Zoom out')}
+                                                    disabled={zoom <= MIN_ZOOM + 0.001}
+                                                >
+                                                    -
+                                                </button>
+                                                <input
+                                                    id="overlay-zoom-full"
+                                                    type="range"
+                                                    min={MIN_ZOOM}
+                                                    max={MAX_ZOOM}
+                                                    step={ZOOM_STEP}
+                                                    value={zoom}
+                                                    onChange={(event) => handleZoomChange(Number(event.target.value))}
+                                                    aria-label={t('Zoom')}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="zoom-button"
+                                                    onClick={() => handleZoomChange(zoom + ZOOM_STEP)}
+                                                    aria-label={t('Zoom in')}
+                                                    disabled={zoom >= MAX_ZOOM - 0.001}
+                                                >
+                                                    +
+                                                </button>
+                                                <span className="map-zoom-readout mono">
+                                                    {Math.round(zoom * 100)}%
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div className="map-controls">
+                                            <label>{t('Move')}</label>
+                                            <div className="map-move-toggle" role="group" aria-label={t('Move')}>
+                                                <button
+                                                    type="button"
+                                                    className={`map-move-button${dragTarget === 'both' ? ' active' : ''}`}
+                                                    onClick={() => setDragTarget('both')}
+                                                >
+                                                    {t('Pan view')}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className={`map-move-button${dragTarget === 'primary' ? ' active' : ''}`}
+                                                    onClick={() => setDragTarget('primary')}
+                                                >
+                                                    {t('Move {{country}}', { country: primary.label })}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className={`map-move-button${dragTarget === 'secondary' ? ' active' : ''}`}
+                                                    onClick={() => setDragTarget('secondary')}
+                                                >
+                                                    {t('Move {{country}}', { country: secondary.label })}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className={`map-stage${isDragging ? ' dragging' : ''}`}>
+                                    <svg
+                                        viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
+                                        role="img"
+                                        aria-label={t('Overlay of {{countryA}} and {{countryB}}', {
+                                            countryA: primary.label,
+                                            countryB: secondary.label,
+                                        })}
+                                        onPointerDown={handlePointerDown}
+                                        onPointerMove={handlePointerMove}
+                                        onPointerUp={handlePointerEnd}
+                                        onPointerCancel={handlePointerEnd}
+                                    >
+                                        {overlay && (
+                                            <>
+                                                <path
+                                                    className="map-path primary"
+                                                    d={overlay.primaryPath}
+                                                    transform={overlay.primaryTransform}
+                                                />
+                                                <path
+                                                    className="map-path secondary"
+                                                    d={overlay.secondaryPath}
+                                                    transform={overlay.secondaryTransform}
+                                                />
+                                            </>
+                                        )}
+                                    </svg>
+                                </div>
+                                <p className="map-footnote">
+                                    {t('Map data: Natural Earth 1:{{scale}}.', { scale: resolution })}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {!isFullscreen && (
+                        <motion.div
+                            className="country-compare-map"
+                            initial={{ y: 20, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ duration: 0.6 }}
+                        >
                         <div className="map-header">
                             <div className="map-title">
                                 <h2>{t('Overlay view')}</h2>
                                 <p>{t('Equal-area projection keeps the size ratio precise.')}</p>
                             </div>
                             <div className="map-tools">
+                                <button
+                                    type="button"
+                                    className="fullscreen-toggle"
+                                    onClick={() => setIsFullscreen(true)}
+                                >
+                                    {t('Full screen')}
+                                </button>
                                 <div className="map-legend">
                                     <span className="legend-item primary">
                                         <span className="legend-dot" />
@@ -651,7 +908,7 @@ export const CountrySizeCompare = () => {
                                             className={`map-move-button${dragTarget === 'both' ? ' active' : ''}`}
                                             onClick={() => setDragTarget('both')}
                                         >
-                                            {t('Move both')}
+                                            {t('Pan view')}
                                         </button>
                                         <button
                                             type="button"
@@ -703,7 +960,8 @@ export const CountrySizeCompare = () => {
                         <p className="map-footnote">
                             {t('Map data: Natural Earth 1:{{scale}}.', { scale: resolution })}
                         </p>
-                    </motion.div>
+                        </motion.div>
+                    )}
 
                     <motion.div
                         className="country-compare-blocks"
