@@ -412,8 +412,9 @@ export function IncomeRank() {
   };
 
   const basisLabel = basis === 'PPP' ? t('PPP (cost of living adjusted)') : t('Market exchange rate (MER)');
-  const worldCode = WORLD_INCOME_WID.countryCodeByBasis[basis];
-  const source = WORLD_INCOME_WID.sourceFileByBasis[basis];
+  // These are available for future use if needed
+  void WORLD_INCOME_WID.countryCodeByBasis[basis];
+  void WORLD_INCOME_WID.sourceFileByBasis[basis];
 
   return (
     <motion.div

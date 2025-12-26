@@ -195,12 +195,13 @@ export const CountrySizeCompare = () => {
     useEffect(() => {
         if (!isFullscreen) return;
         document.body.classList.add('cc-fullscreen-lock');
-        if (window.screen?.orientation?.lock) {
-            window.screen.orientation.lock('landscape').catch(() => {});
+        const orientation = window.screen?.orientation as ScreenOrientation & { lock?: (type: string) => Promise<void>; unlock?: () => void };
+        if (orientation?.lock) {
+            orientation.lock('landscape').catch(() => {});
         }
         return () => {
             document.body.classList.remove('cc-fullscreen-lock');
-            window.screen?.orientation?.unlock?.();
+            orientation?.unlock?.();
         };
     }, [isFullscreen]);
 
@@ -238,11 +239,11 @@ export const CountrySizeCompare = () => {
         const scale = Math.min((VIEWBOX_WIDTH * 0.82) / maxWidth, (VIEWBOX_HEIGHT * 0.82) / maxHeight);
         const scaled = scale * zoom;
 
-        const primaryCenter = [
+        const primaryCenter: [number, number] = [
             (primaryBounds[0][0] + primaryBounds[1][0]) / 2,
             (primaryBounds[0][1] + primaryBounds[1][1]) / 2,
         ];
-        const secondaryCenter = [
+        const secondaryCenter: [number, number] = [
             (secondaryBounds[0][0] + secondaryBounds[1][0]) / 2,
             (secondaryBounds[0][1] + secondaryBounds[1][1]) / 2,
         ];

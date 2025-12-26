@@ -26,6 +26,13 @@ export const AppSelector = ({ onSelectApp }: AppSelectorProps) => {
             available: true,
         },
         {
+            id: 'global-stats',
+            title: t('Global Profile'),
+            description: t('Your height, age, and birthday vs. the world'),
+            icon: '📊',
+            available: true,
+        },
+        {
             id: 'world-rank',
             title: t('Awesome Rank'),
             description: t('Where do you rank among 8 billion people?'),
